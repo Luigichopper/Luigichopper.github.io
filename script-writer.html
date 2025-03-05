@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprehensive Script Writer</title>
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #2c3e50;
+      --accent: #e74c3c;
+      --light: #ecf0f1;
+      --dark: #2c3e50;
+      --success: #2ecc71;
+      --warning: #f39c12;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background-color: var(--secondary);
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .editor-container {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .toolbar {
+      background-color: var(--light);
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    h1, h2, h3 {
+      margin-bottom: 15px;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo i {
+      font-size: 1.8rem;
+    }
+    
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    button.accent {
+      background-color: var(--accent);
+    }
+    
+    button.accent:hover {
+      background-color: #c0392b;
+    }
+    
+    button.success {
+      background-color: var(--success);
+    }
+    
+    button.success:hover {
+      background-color: #27ae60;
+    }
+    
+    .script-element {
+      margin-bottom: 15px;
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .script-element:hover .element-actions {
+      opacity: 1;
+    }
+    
+    .element-content {
+      padding: 15px;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .element-actions {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      gap: 5px;
+    }
+    
+    .element-actions button {
+      padding: 5px 8px;
+      font-size: 0.8rem;
+    }
+    
+    .dialogue {
+      margin-left: 50px;
+    }
+    
+    .character-name {
+      font-weight: bold;
+    }
+    
+    .character-emotion {
+      font-style: italic;
+      color: #555;
+    }
+    
+    .location {
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .action {
+      font-style: italic;
+    }
+    
+    .camera {
+      font-weight: bold;
+      color: var(--accent);
+    }
+    
+    .transition {
+      text-align: right;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    
+    .prop {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+    
+    .sound {
+      color: #9b59b6;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 500px;
+      max-width: 90%;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #777;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .script-info {
+      background-color: white;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .help-section {
+      background-color: var(--light);
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    
+    .help-section h3 {
+      margin-bottom: 10px;
+    }
+    
+    .help-section ul {
+      padding-left: 20px;
+    }
+    
+    .help-section li {
+      margin-bottom: 5px;
+    }
+    
+    .character-list {
+      margin-top: 20px;
+    }
+    
+    .character-item {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+    
+    .character-item:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .settings-section {
+      margin-top: auto;
+      padding-top: 20px;
+    }
+
+    /* Print styles for proper script formatting when printing */
+    @media print {
+      .sidebar, .toolbar, .element-actions, button {
+        display: none !important;
+      }
+      
+      .container, .main, .editor-container {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+      }
+      
+      body {
+        background-color: white;
+        font-size: 12pt;
+      }
+      
+      .element-content {
+        page-break-inside: avoid;
+        box-shadow: none;
+        padding: 0;
+      }
+      
+      .script-element {
+        margin-bottom: 1em;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-pen-fancy"></i> Script Writer
+      </div>
+      
+      <h3>Project</h3>
+      <div class="form-group">
+        <label for="script-title">Title</label>
+        <input type="text" id="script-title" placeholder="Untitled Script">
+      </div>
+      <div class="form-group">
+        <label for="script-author">Author</label>
+        <input type="text" id="script-author" placeholder="Your Name">
+      </div>
+      
+      <div class="character-list">
+        <h3>Characters <button onclick="showAddCharacterModal()" title="Add Character"><i class="fas fa-plus"></i></button></h3>
+        <div id="character-list-items">
+          <!-- Characters will be added here -->
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+          <li><strong>Ctrl+S</strong>: Save script</li>
+          <li><strong>Ctrl+E</strong>: Export script</li>
+          <li><strong>Ctrl+P</strong>: Print script</li>
+        </ul>
+      </div>
+      
+      <div class="settings-section">
+        <button onclick="exportScript()" class="success">
+          <i class="fas fa-download"></i> Export Script
+        </button>
+      </div>
+    </div>
+    
+    <div class="main">
+      <div class="toolbar">
+        <button onclick="addElement('scene')" title="Add Scene Heading">
+          <i class="fas fa-map-marker-alt"></i> Scene
+        </button>
+        <button onclick="addElement('action')" title="Add Action">
+          <i class="fas fa-running"></i> Action
+        </button>
+        <button onclick="addElement('character')" title="Add Character">
+          <i class="fas fa-user"></i> Character
+        </button>
+        <button onclick="addElement('dialogue')" title="Add Dialogue">
+          <i class="fas fa-comment"></i> Dialogue
+        </button>
+        <button onclick="addElement('parenthetical')" title="Add Parenthetical">
+          <i class="fas fa-comment-dots"></i> Parenthetical
+        </button>
+        <button onclick="addElement('transition')" title="Add Transition">
+          <i class="fas fa-exchange-alt"></i> Transition
+        </button>
+        <button onclick="addElement('camera')" title="Add Camera Direction">
+          <i class="fas fa-video"></i> Camera
+        </button>
+        <button onclick="addElement('prop')" title="Add Prop">
+          <i class="fas fa-cube"></i> Prop
+        </button>
+        <button onclick="addElement('sound')" title="Add Sound">
+          <i class="fas fa-volume-up"></i> Sound
+        </button>
+        <button onclick="addElement('note')" title="Add Note">
+          <i class="fas fa-sticky-note"></i> Note
+        </button>
+        
+        <button onclick="printScript()" title="Print" style="margin-left: auto;">
+          <i class="fas fa-print"></i> Print
+        </button>
+        <button onclick="saveScript()" class="success" title="Save">
+          <i class="fas fa-save"></i> Save
+        </button>
+      </div>
+      
+      <div class="editor-container" id="editor">
+        <div class="script-info">
+          <h1 id="display-title">Untitled Script</h1>
+          <p>By <span id="display-author">Anonymous</span></p>
+        </div>
+        
+        <div id="script-elements">
+          <!-- Script elements will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Element Modal -->
+  <div class="modal" id="element-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="element-modal-title">Add Element</div>
+        <button class="close-modal" onclick="closeModal('element-modal')">&times;</button>
+      </div>
+      
+      <div id="element-form">
+        <!-- Form will be dynamically populated based on element type -->
+      </div>
+      
+      <div class="modal-footer">
+        <button onclick="closeModal('element-modal')">Cancel</button>
+        <button onclick="saveElement()" class="success">Add</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Character Modal -->
+  <div class="modal" id="character-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Add Character</div>
+        <button class="close-modal" onclick="closeModal('character-modal')">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label for="character-name">Name</label>
+        <input type="text" id="character-name" placeholder="Character Name">
+      </div>
+      
+      <div class="form-group">
+        <label for="character-description">Description</label>
+        <textarea id="character-description" placeholder="Character description, traits, etc."></textarea>
+      </div>
+      
+      <div class="modal-footer">
+        <button onclick="closeModal('character-modal')">Cancel</button>
+        <button onclick="saveCharacter()" class="success">Add Character</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Export Modal -->
+  <div class="modal" id="export-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Export Script</div>
+        <button class="close-modal" onclick="closeModal('export-modal')">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label for="export-format">Format</label>
+        <select id="export-format">
+          <option value="txt">Plain Text (.txt)</option>
+          <option value="html">HTML (.html)</option>
+          <option value="json">JSON (.json)</option>
+        </select>
+      </div>
+      
+      <div class="modal-footer">
+        <button onclick="closeModal('export-modal')">Cancel</button>
+        <button onclick="downloadScript()" class="success">Download</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Global variables
+    let scriptData = {
+      title: "Untitled Script",
+      author: "",
+      elements: [],
+      characters: []
+    };
+    
+    let currentElementType = null;
+    let editingElementIndex = null;
+    
+    // Initialize script
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load from local storage if available
+      loadScript();
+      
+      // Set up event listeners
+      document.getElementById('script-title').addEventListener('input', function() {
+        scriptData.title = this.value;
+        document.getElementById('display-title').textContent = this.value || "Untitled Script";
+        saveToLocalStorage();
+      });
+      
+      document.getElementById('script-author').addEventListener('input', function() {
+        scriptData.author = this.value;
+        document.getElementById('display-author').textContent = this.value || "Anonymous";
+        saveToLocalStorage();
+      });
+      
+      // Set up keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 's') {
+          e.preventDefault();
+          saveScript();
+        } else if (e.ctrlKey && e.key === 'e') {
+          e.preventDefault();
+          exportScript();
+        } else if (e.ctrlKey && e.key === 'p') {
+          e.preventDefault();
+          printScript();
+        }
+      });
+    });
+    
+    // Element Type Definitions
+    const elementTypes = {
+      scene: {
+        title: "Scene Heading",
+        icon: "map-marker-alt",
+        form: `
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" placeholder="INT. LIVING ROOM">
+          </div>
+          <div class="form-group">
+            <label for="time">Time</label>
+            <input type="text" id="time" placeholder="DAY or NIGHT">
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            location: document.getElementById('location').value,
+            time: document.getElementById('time').value
+          };
+        },
+        render: function(data) {
+          return `<div class="location">${data.location}${data.time ? ' - ' + data.time : ''}</div>`;
+        }
+      },
+      action: {
+        title: "Action",
+        icon: "running",
+        form: `
+          <div class="form-group">
+            <label for="action-text">Action</label>
+            <textarea id="action-text" placeholder="Describe what happens in the scene..."></textarea>
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('action-text').value
+          };
+        },
+        render: function(data) {
+          return `<div class="action">${data.text}</div>`;
+        }
+      },
+      character: {
+        title: "Character",
+        icon: "user",
+        form: `
+          <div class="form-group">
+            <label for="element-character">Character</label>
+            <select id="element-character">
+              <option value="">Select a character...</option>
+              <!-- Characters will be added dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="character-emotion">Emotion (optional)</label>
+            <input type="text" id="character-emotion" placeholder="e.g., angry, excited">
+          </div>
+        `,
+        getFormData: function() {
+          const characterSelect = document.getElementById('element-character');
+          return {
+            name: characterSelect.options[characterSelect.selectedIndex].text,
+            emotion: document.getElementById('character-emotion').value
+          };
+        },
+        render: function(data) {
+          return `<div class="character-name">${data.name}${data.emotion ? ' <span class="character-emotion">(' + data.emotion + ')</span>' : ''}</div>`;
+        }
+      },
+      dialogue: {
+        title: "Dialogue",
+        icon: "comment",
+        form: `
+          <div class="form-group">
+            <label for="dialogue-text">Dialogue</label>
+            <textarea id="dialogue-text" placeholder="Character's speech goes here..."></textarea>
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('dialogue-text').value
+          };
+        },
+        render: function(data) {
+          return `<div class="dialogue">${data.text}</div>`;
+        }
+      },
+      parenthetical: {
+        title: "Parenthetical",
+        icon: "comment-dots",
+        form: `
+          <div class="form-group">
+            <label for="parenthetical-text">Parenthetical</label>
+            <input type="text" id="parenthetical-text" placeholder="(whispering)">
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('parenthetical-text').value
+          };
+        },
+        render: function(data) {
+          return `<div class="dialogue"><span class="parenthetical">(${data.text})</span></div>`;
+        }
+      },
+      transition: {
+        title: "Transition",
+        icon: "exchange-alt",
+        form: `
+          <div class="form-group">
+            <label for="transition-text">Transition</label>
+            <input type="text" id="transition-text" placeholder="CUT TO:">
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('transition-text').value
+          };
+        },
+        render: function(data) {
+          return `<div class="transition">${data.text}</div>`;
+        }
+      },
+      camera: {
+        title: "Camera Direction",
+        icon: "video",
+        form: `
+          <div class="form-group">
+            <label for="camera-text">Camera Direction</label>
+            <input type="text" id="camera-text" placeholder="CLOSE UP">
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('camera-text').value
+          };
+        },
+        render: function(data) {
+          return `<div class="camera">${data.text}</div>`;
+        }
+      },
+      prop: {
+        title: "Prop",
+        icon: "cube",
+        form: `
+          <div class="form-group">
+            <label for="prop-name">Prop Name</label>
+            <input type="text" id="prop-name" placeholder="Prop name">
+          </div>
+          <div class="form-group">
+            <label for="prop-description">Description (optional)</label>
+            <textarea id="prop-description" placeholder="Describe the prop..."></textarea>
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            name: document.getElementById('prop-name').value,
+            description: document.getElementById('prop-description').value
+          };
+        },
+        render: function(data) {
+          return `<div><span class="prop">${data.name}</span>${data.description ? ': ' + data.description : ''}</div>`;
+        }
+      },
+      sound: {
+        title: "Sound Effect",
+        icon: "volume-up",
+        form: `
+          <div class="form-group">
+            <label for="sound-text">Sound Effect</label>
+            <input type="text" id="sound-text" placeholder="DOOR SLAM">
+          </div>
+          <div class="form-group">
+            <label for="sound-description">Description (optional)</label>
+            <textarea id="sound-description" placeholder="Describe the sound..."></textarea>
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('sound-text').value,
+            description: document.getElementById('sound-description').value
+          };
+        },
+        render: function(data) {
+          return `<div><span class="sound">SOUND: ${data.text}</span>${data.description ? ' - ' + data.description : ''}</div>`;
+        }
+      },
+      note: {
+        title: "Note",
+        icon: "sticky-note",
+        form: `
+          <div class="form-group">
+            <label for="note-text">Note</label>
+            <textarea id="note-text" placeholder="Add a note or comment..."></textarea>
+          </div>
+        `,
+        getFormData: function() {
+          return {
+            text: document.getElementById('note-text').value
+          };
+        },
+        render: function(data) {
+          return `<div style="color: #777; font-style: italic; border-left: 3px solid #f39c12; padding-left: 10px;">NOTE: ${data.text}</div>`;
+        }
+      }
+    };
+    
+    // Function to add a new element
+    function addElement(type) {
+      currentElementType = type;
+      editingElementIndex = null;
+      
+      const modalTitle = document.getElementById('element-modal-title');
+      modalTitle.textContent = `Add ${elementTypes[type].title}`;
+      
+      const form = document.getElementById('element-form');
+      form.innerHTML = elementTypes[type].form;
+      
+      // If it's a character element, populate the character dropdown
+      if (type === 'character') {
+        populateCharacterDropdown();
+      }
+      
+      openModal('element-modal');
+    }
+    
+    // Function to edit an existing element
+    function editElement(index) {
+      const element = scriptData.elements[index];
+      currentElementType = element.type;
+      editingElementIndex = index;
+      
+      const modalTitle = document.getElementById('element-modal-title');
+      modalTitle.textContent = `Edit ${elementTypes[element.type].title}`;
+      
+      const form = document.getElementById('element-form');
+      form.innerHTML = elementTypes[element.type].form;
+      
+      // If it's a character element, populate the character dropdown
+      if (element.type === 'character') {
+        populateCharacterDropdown();
+        
+        // Set the selected character
+        setTimeout(() => {
+          const characterSelect = document.getElementById('element-character');
+          for (let i = 0; i < characterSelect.options.length; i++) {
+            if (characterSelect.options[i].text === element.data.name) {
+              characterSelect.selectedIndex = i;
+              break;
+            }
+          }
+          
+          document.getElementById('character-emotion').value = element.data.emotion || '';
+        }, 10);
+      } else {
+        // Populate form with existing data
+        switch (element.type) {
+          case 'scene':
+            document.getElementById('location').value = element.data.location || '';
+            document.getElementById('time').value = element.data.time || '';
+            break;
+          case 'action':
+          case 'dialogue':
+          case 'note':
+            document.getElementById(`${element.type}-text`).value = element.data.text || '';
+            break;
+          case 'parenthetical':
+          case 'transition':
+          case 'camera':
+            document.getElementById(`${element.type}-text`).value = element.data.text || '';
+            break;
+          case 'prop':
+            document.getElementById('prop-name').value = element.data.name || '';
+            document.getElementById('prop-description').value = element.data.description || '';
+            break;
+          case 'sound':
+            document.getElementById('sound-text').value = element.data.text || '';
+            document.getElementById('sound-description').value = element.data.description || '';
+            break;
+        }
+      }
+      
+      openModal('element-modal');
+    }
+    
+    // Function to save the current element
+    function saveElement() {
+      if (!currentElementType) return;
+      
+      const data = elementTypes[currentElementType].getFormData();
+      
+      // Validate data
+      if (currentElementType === 'scene' && !data.location) {
+        alert('Please enter a location');
+        return;
+      } else if ((currentElementType === 'action' || currentElementType === 'dialogue') && !data.text) {
+        alert('Please enter text');
+        return;
+      } else if (currentElementType === 'character' && !data.name) {
+        alert('Please select a character');
+        return;
+      }
+      
+      const elementData = {
+        type: currentElementType,
+        data: data
+      };
+      
+      if (editingElementIndex !== null) {
+        // Update existing element
+        scriptData.elements[editingElementIndex] = elementData;
+      } else {
+        // Add new element
+        scriptData.elements.push(elementData);
+      }
+      
+      renderElements();
+      saveToLocalStorage();
+      closeModal('element-modal');
+    }
+    
+    // Function to delete an element
+    function deleteElement(index) {
+      if (confirm('Are you sure you want to delete this element?')) {
+        scriptData.elements.splice(index, 1);
+        renderElements();
+        saveToLocalStorage();
+      }
+    }
+    
+    // Function to move an element up or down
+    function moveElement(index, direction) {
+      if (direction === 'up' && index > 0) {
+        const temp = scriptData.elements[index];
+        scriptData.elements[index] = scriptData.elements[index - 1];
+        scriptData.elements[index - 1] = temp;
+      } else if (direction === 'down' && index < scriptData.elements.length - 1) {
+        const temp = scriptData.elements[index];
+        scriptData.elements[index] = scriptData.elements[index + 1];
+        scriptData.elements[index + 1] = temp;
+      }
+      
+      renderElements();
+      saveToLocalStorage();
+    }
+    
+    // Function to render all script elements
+    function renderElements() {
+      const container = document.getElementById('script-elements');
+      container.innerHTML = '';
+      
+      scriptData.elements.forEach((element, index) => {
+        const elementDiv = document.createElement('div');
+        elementDiv.className = 'script-element';
+        
+        const elementContent = document.createElement('div');
+        elementContent.className = 'element-content';
+        elementContent.innerHTML = elementTypes[element.type].render(element.data);
+        
+        const elementActions = document.createElement('div');
+        elementActions.className = 'element-actions';
+        elementActions.innerHTML = `
+          <button onclick="editElement(${index})" title="Edit"><i class="fas fa-edit"></i></button>
+          <button onclick="deleteElement(${index})" class="accent" title="Delete"><i class="fas fa-trash"></i></button>
+          <button onclick="moveElement(${index}, 'up')" title="Move Up"><i class="fas fa-arrow-up"></i></button>
+          <button onclick="moveElement(${index}, 'down')" title="Move Down"><i class="fas fa-arrow-down"></i></button>
+        `;
+        
+        elementDiv.appendChild(elementContent);
+        elementDiv.appendChild(elementActions);
+        container.appendChild(elementDiv);
+      });
+    }
+    
+    // Function to show the add character modal
+    function showAddCharacterModal() {
+      document.getElementById('character-name').value = '';
+      document.getElementById('character-description').value = '';
+      openModal('character-modal');
+    }
+    
+    // Function to save a new character
+    function saveCharacter() {
+      const name = document.getElementById('character-name').value.trim();
+      const description = document.getElementById('character-description').value.trim();
+      
+      if (!name) {
+        alert('Please enter a character name');
+        return;
+      }
+      
+      // Check if character already exists
+      const exists = scriptData.characters.some(char => char.name === name);
+      if (exists) {
+        alert('A character with this name already exists');
+        return;
+      }
+      
+      scriptData.characters.push({
+        name: name,
+        description: description
+      });
+      
+      renderCharacters();
+      saveToLocalStorage();
+      closeModal('character-modal');
+    }
+    
+    // Function to render the character list
+    function renderCharacters() {
+      const container = document.getElementById('character-list-items');
+      container.innerHTML = '';
+      
+      scriptData.characters.forEach(character => {
+        const characterDiv = document.createElement('div');
+        characterDiv.className = 'character-item';
+        characterDiv.textContent = character.name;
+        characterDiv.title = character.description || '';
+        characterDiv.onclick = function() {
+          addElement('character');
+          setTimeout(() => {
+            const characterSelect = document.getElementById('element-character');
+            for (let i = 0; i < characterSelect.options.length; i++) {
+              if (characterSelect.options[i].text === character.name) {
+                characterSelect.selectedIndex = i;
+                break;
+              }
+            }
+          }, 10);
+        };
+        
+        container.appendChild(characterDiv);
+      });
+    }
+    
+    // Function to populate the character dropdown
+    function populateCharacterDropdown() {
+      const select = document.getElementById('element-character');
+      select.innerHTML = '<option value="">Select a character...</option>';
+      
+      scriptData.characters.forEach(character => {
+        const option = document.createElement('option');
+        option.value = character.name;
+        option.textContent = character.name;
+        select.appendChild(option);
+      });
+    }
+    
+    // Function to save the script
+    function saveScript() {
+      saveToLocalStorage();
+      alert('Script saved successfully!');
+    }
+    
+    // Function to save script to local storage
+    function saveToLocalStorage() {
+      localStorage.setItem('scriptData', JSON.stringify(scriptData));
+    }
+    
+    // Function to load script from local storage
+    function loadScript() {
+      const savedData = localStorage.getItem('scriptData');
+      if (savedData) {
+        try {
+          scriptData = JSON.parse(savedData);
+          
+          // Update UI with loaded data
+          document.getElementById('script-title').value = scriptData.title || 'Untitled Script';
+          document.getElementById('display-title').textContent = scriptData.title || 'Untitled Script';
+          
+          document.getElementById('script-author').value = scriptData.author || '';
+          document.getElementById('display-author').textContent = scriptData.author || 'Anonymous';
+          
+          renderElements();
+          renderCharacters();
+        } catch (e) {
+          console.error('Error loading script:', e);
+        }
+      }
+    }
+    
+    // Function to export the script
+    function exportScript() {
+      openModal('export-modal');
+    }
+    
+    // Function to download the script
+    function downloadScript() {
+      const format = document.getElementById('export-format').value;
+      let content, filename, type;
+      
+      switch (format) {
+        case 'txt':
+          content = generateTextScript();
+          filename = `${scriptData.title.replace(/\s+/g, '_') || 'script'}.txt`;
+          type = 'text/plain';
+          break;
+        case 'html':
+          content = generateHtmlScript();
+          filename = `${scriptData.title.replace(/\s+/g, '_') || 'script'}.html`;
+          type = 'text/html';
+          break;
+        case 'json':
+          content = JSON.stringify(scriptData, null, 2);
+          filename = `${scriptData.title.replace(/\s+/g, '_') || 'script'}.json`;
+          type = 'application/json';
+          break;
+      }
+      
+      const blob = new Blob([content], { type: type });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      closeModal('export-modal');
+    }
+    
+    // Function to generate a plain text script
+    function generateTextScript() {
+      let text = `${scriptData.title || 'Untitled Script'}\n`;
+      text += `By ${scriptData.author || 'Anonymous'}\n\n`;
+      
+      scriptData.elements.forEach(element => {
+        switch (element.type) {
+          case 'scene':
+            text += `${element.data.location}${element.data.time ? ' - ' + element.data.time : ''}\n\n`;
+            break;
+          case 'action':
+            text += `${element.data.text}\n\n`;
+            break;
+          case 'character':
+            text += `${element.data.name.toUpperCase()}${element.data.emotion ? ' (' + element.data.emotion + ')' : ''}\n`;
+            break;
+          case 'dialogue':
+            text += `    ${element.data.text}\n\n`;
+            break;
+          case 'parenthetical':
+            text += `    (${element.data.text})\n`;
+            break;
+          case 'transition':
+            text += `${element.data.text}\n\n`;
+            break;
+          case 'camera':
+            text += `${element.data.text}\n\n`;
+            break;
+          case 'prop':
+            text += `PROP: ${element.data.name}${element.data.description ? ' - ' + element.data.description : ''}\n\n`;
+            break;
+          case 'sound':
+            text += `SOUND: ${element.data.text}${element.data.description ? ' - ' + element.data.description : ''}\n\n`;
+            break;
+          case 'note':
+            text += `NOTE: ${element.data.text}\n\n`;
+            break;
+        }
+      });
+      
+      return text;
+    }
+    
+    // Function to generate an HTML script
+    function generateHtmlScript() {
+      let html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${scriptData.title || 'Untitled Script'}</title>
+  <style>
+    body { font-family: 'Courier New', monospace; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .title { font-size: 24px; text-align: center; margin-bottom: 5px; }
+    .author { text-align: center; margin-bottom: 30px; }
+    .scene { font-weight: bold; text-transform: uppercase; margin-top: 20px; }
+    .character { font-weight: bold; text-transform: uppercase; text-align: center; margin-top: 15px; }
+    .emotion { font-weight: normal; font-style: italic; }
+    .dialogue { text-align: center; width: 70%; margin: 0 auto 15px auto; }
+    .parenthetical { font-style: italic; }
+    .action { margin-bottom: 15px; }
+    .transition { text-align: right; font-weight: bold; text-transform: uppercase; margin: 15px 0; }
+    .camera { font-weight: bold; margin-bottom: 15px; }
+    .prop { font-weight: bold; margin-bottom: 15px; }
+    .sound { font-weight: bold; margin-bottom: 15px; }
+    .note { color: #777; font-style: italic; border-left: 3px solid #f39c12; padding-left: 10px; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <div class="title">${scriptData.title || 'Untitled Script'}</div>
+  <div class="author">By ${scriptData.author || 'Anonymous'}</div>
+`;
+      
+      scriptData.elements.forEach(element => {
+        switch (element.type) {
+          case 'scene':
+            html += `  <div class="scene">${element.data.location}${element.data.time ? ' - ' + element.data.time : ''}</div>\n`;
+            break;
+          case 'action':
+            html += `  <div class="action">${element.data.text}</div>\n`;
+            break;
+          case 'character':
+            html += `  <div class="character">${element.data.name}${element.data.emotion ? ' <span class="emotion">(' + element.data.emotion + ')</span>' : ''}</div>\n`;
+            break;
+          case 'dialogue':
+            html += `  <div class="dialogue">${element.data.text}</div>\n`;
+            break;
+          case 'parenthetical':
+            html += `  <div class="dialogue parenthetical">(${element.data.text})</div>\n`;
+            break;
+          case 'transition':
+            html += `  <div class="transition">${element.data.text}</div>\n`;
+            break;
+          case 'camera':
+            html += `  <div class="camera">${element.data.text}</div>\n`;
+            break;
+          case 'prop':
+            html += `  <div class="prop">PROP: ${element.data.name}${element.data.description ? ' - ' + element.data.description : ''}</div>\n`;
+            break;
+          case 'sound':
+            html += `  <div class="sound">SOUND: ${element.data.text}${element.data.description ? ' - ' + element.data.description : ''}</div>\n`;
+            break;
+          case 'note':
+            html += `  <div class="note">NOTE: ${element.data.text}</div>\n`;
+            break;
+        }
+      });
+      
+      html += `</body>\n</html>`;
+      
+      return html;
+    }
+    
+    // Function to print the script
+    function printScript() {
+      window.print();
+    }
+    
+    // Modal functions
+    function openModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+    
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      if (event.target.className === 'modal') {
+        event.target.style.display = 'none';
+      }
+    };
+  </script>
+</body>
+</html>
