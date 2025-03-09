@@ -7,7 +7,7 @@
   <style>
     /* Modern Typography */
     @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Montserrat:wght@400;500;600;700&display=swap');
-
+    
     :root {
       /* Color scheme - calm, spiritual theme */
       --primary-color: #3a5a78;
@@ -22,19 +22,19 @@
       --border-color: #e0e0e0;
       --highlight: #f9f3e5;
       --shadow: rgba(0, 0, 0, 0.05);
-
+      
       /* Typography */
       --heading-font: 'Montserrat', sans-serif;
       --body-font: 'Merriweather', serif;
       --verse-spacing: 1.8;
     }
-
+    
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
+    
     body {
       font-family: var(--body-font);
       line-height: 1.6;
@@ -46,7 +46,7 @@
       background-image: linear-gradient(to bottom, var(--secondary-color), #fff);
       min-height: 100vh;
     }
-
+    
     header {
       background-color: var(--primary-color);
       color: white;
@@ -56,7 +56,7 @@
       position: relative;
       overflow: hidden;
     }
-
+    
     header h1 {
       font-family: var(--heading-font);
       font-weight: 700;
@@ -65,7 +65,7 @@
       position: relative;
       z-index: 1;
     }
-
+    
     header p {
       font-family: var(--heading-font);
       font-weight: 400;
@@ -74,7 +74,7 @@
       position: relative;
       z-index: 1;
     }
-
+    
     header::after {
       content: '';
       position: absolute;
@@ -85,18 +85,18 @@
       background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
       opacity: 0.5;
     }
-
+    
     main {
       padding: 20px;
     }
-
+    
     .app-container {
       display: flex;
       flex-direction: column;
       gap: 30px;
       padding: 20px 0;
     }
-
+    
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -106,12 +106,12 @@
       border-radius: 10px;
       box-shadow: 0 5px 15px var(--shadow);
     }
-
+    
     .control-group {
       flex: 1;
       min-width: 200px;
     }
-
+    
     .control-group label {
       display: block;
       margin-bottom: 8px;
@@ -120,7 +120,7 @@
       font-size: 0.9rem;
       color: var(--primary-color);
     }
-
+    
     select, button {
       width: 100%;
       padding: 12px 15px;
@@ -131,13 +131,13 @@
       font-family: var(--heading-font);
       transition: all 0.3s ease;
     }
-
+    
     select:focus, button:focus {
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 0 2px rgba(58, 90, 120, 0.2);
     }
-
+    
     button {
       background: var(--primary-color);
       color: white;
@@ -148,18 +148,18 @@
       justify-content: center;
       gap: 8px;
     }
-
+    
     button:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
     }
-
+    
     button:disabled {
       background: #cccccc;
       cursor: not-allowed;
       transform: none;
     }
-
+    
     .translation-info {
       background: var(--primary-light);
       color: white;
@@ -171,29 +171,29 @@
       margin-top: 15px;
       text-align: center;
     }
-
+    
     .translation-selector {
       margin-top: 20px;
     }
-
+    
     .navigation {
       display: flex;
       justify-content: space-between;
       gap: 15px;
       margin: 15px 0;
     }
-
+    
     .navigation button {
       flex: 1;
     }
-
+    
     .scripture-container {
       position: relative;
       overflow: hidden;
       border-radius: 10px;
       box-shadow: 0 5px 15px var(--shadow);
     }
-
+    
     .info-bar {
       background: var(--primary-color);
       color: white;
@@ -204,7 +204,7 @@
       justify-content: space-between;
       align-items: center;
     }
-
+    
     .scripture-display {
       background: var(--card-bg);
       padding: 30px;
@@ -216,7 +216,7 @@
       line-height: var(--verse-spacing);
       column-gap: 40px;
     }
-
+    
     .verse {
       margin-bottom: 1.5rem;
       padding: 0.5rem;
@@ -224,11 +224,11 @@
       position: relative;
       transition: background 0.2s ease;
     }
-
+    
     .verse:hover {
       background: var(--highlight);
     }
-
+    
     .verse-number {
       font-weight: bold;
       color: var(--accent-color);
@@ -237,14 +237,14 @@
       position: relative;
       top: -2px;
     }
-
+    
     .loading, .empty-state {
       text-align: center;
       padding: 50px 20px;
       font-style: italic;
       color: var(--text-light);
     }
-
+    
     .error {
       color: #e74c3c;
       text-align: center;
@@ -253,57 +253,57 @@
       border-radius: 6px;
       border-left: 4px solid #e74c3c;
     }
-
+    
     .switch-translations-btn {
       background: var(--accent-color);
       color: var(--text-color);
     }
-
+    
     .switch-translations-btn:hover {
       background: #c19365;
     }
-
+    
     /* Switches to dual-column layout for bible text on larger screens */
     @media (min-width: 768px) {
       .app-container {
         flex-direction: row;
       }
-
+      
       .sidebar {
         flex: 1;
         max-width: 350px;
       }
-
+      
       .main-content {
         flex: 3;
       }
-
+      
       .scripture-display {
         columns: 2;
       }
     }
-
+    
     @media (min-width: 1200px) {
       .scripture-display {
         columns: 2;
       }
     }
-
+    
     @media (max-width: 767px) {
       .navigation {
         flex-direction: column;
       }
-
+      
       .controls {
         flex-direction: column;
       }
     }
-
+    
     /* Special styling for the first verse of a chapter */
     .verse:first-child {
       font-size: 1.15em;
     }
-
+    
     /* Dark mode support with richer colors */
     @media (prefers-color-scheme: dark) {
       :root {
@@ -320,18 +320,18 @@
         --highlight: #332d24;
         --shadow: rgba(0, 0, 0, 0.2);
       }
-
+      
       select {
         background: #252525;
         color: #e0e0e0;
       }
-
+      
       .error {
         background: #2d1b1b;
         color: #e57373;
       }
     }
-
+    
     /* Loading animation */
     .loading-spinner {
       display: inline-block;
@@ -343,11 +343,11 @@
       animation: spin 1s ease-in-out infinite;
       margin-bottom: 15px;
     }
-
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-
+    
     /* Button icons using unicode */
     .icon {
       font-family: sans-serif;
@@ -360,7 +360,7 @@
     <h1>Scripture Reader</h1>
     <p>Read and explore the Bible in multiple translations</p>
   </header>
-
+  
   <main>
     <div class="app-container">
       <div class="sidebar">
@@ -371,34 +371,34 @@
               <option value="">Loading translations...</option>
             </select>
           </div>
-
+          
           <div class="control-group">
             <label for="book-select">Book</label>
             <select id="book-select" disabled>
               <option value="">Select a Book</option>
             </select>
           </div>
-
+          
           <div class="control-group">
             <label for="chapter-select">Chapter</label>
             <select id="chapter-select" disabled>
               <option value="">Select a Chapter</option>
             </select>
           </div>
-
+          
           <div id="translation-info" class="translation-info">
             Select a translation to begin
           </div>
         </div>
       </div>
-
+      
       <div class="main-content">
         <div class="scripture-container">
           <div class="info-bar">
             <span id="current-reference">Select a passage</span>
             <span id="current-translation"></span>
           </div>
-
+          
           <div class="scripture-display" id="scripture-content">
             <div class="empty-state">
               <div class="loading-spinner"></div>
@@ -406,7 +406,7 @@
             </div>
           </div>
         </div>
-
+        
         <div class="navigation">
           <button id="prev-chapter" disabled>
             <span class="icon">&#9664;</span> Previous Chapter
@@ -430,15 +430,46 @@
     const translationInfo = document.getElementById('translation-info');
     const prevChapterBtn = document.getElementById('prev-chapter');
     const nextChapterBtn = document.getElementById('next-chapter');
-
+    
     // Bible data storage
     let bibleData = {};
     let availableTranslations = [];
-    let booksList = [];
+    let booksOrder = [];
     let currentTranslationId = '';
     let currentBook = '';
     let currentChapter = 0;
-
+    
+    // Define the canonical order of Bible books
+    const canonicalBookOrder = [
+      // Old Testament (39 books)
+      "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+      "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+      "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
+      "Ezra", "Nehemiah", "Esther", "Job", "Psalms",
+      "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
+      "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel",
+      "Amos", "Obadiah", "Jonah", "Micah", "Nahum",
+      "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi",
+      // New Testament (27 books)
+      "Matthew", "Mark", "Luke", "John", "Acts",
+      "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+      "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians",
+      "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews",
+      "James", "1 Peter", "2 Peter", "1 John", "2 John",
+      "3 John", "Jude", "Revelation"
+    ];
+    
+    // Fix encoding issues
+    function fixEncodingIssues(text) {
+      if (!text) return text;
+      
+      // Replace the problematic encoded apostrophe 
+      return text.replace(/\u00e2\u20ac\u2122/g, "'")
+                .replace(/â€™/g, "'")
+                .replace(/â€œ/g, '"')
+                .replace(/â€/g, '"');
+    }
+    
     // Initialize application
     async function initApp() {
       try {
@@ -449,29 +480,29 @@
             <p>Loading Bible data...</p>
           </div>
         `;
-
+        
         // Try to load available translations
         await loadAvailableTranslations();
-
+        
         // Add event listeners
         translationSelect.addEventListener('change', handleTranslationChange);
         bookSelect.addEventListener('change', handleBookChange);
         chapterSelect.addEventListener('change', handleChapterChange);
         prevChapterBtn.addEventListener('click', navigateToPrevChapter);
         nextChapterBtn.addEventListener('click', navigateToNextChapter);
-
+        
       } catch (error) {
         scriptureContent.innerHTML = `<div class="error">Error: ${error.message}</div>`;
         console.error('Bible App Error:', error);
       }
     }
-
+    
     // Load available translations
     async function loadAvailableTranslations() {
       try {
         // In a real app, you might have a translations.json file or API endpoint
         // For now, we'll simulate having ASV and KJV available
-
+        
         // First check if ASV is available
         const asvResponse = await fetch('bible_output.json');
         if (asvResponse.ok) {
@@ -482,7 +513,7 @@
             abbreviation: bibleData['asv'].translation.abbreviation
           });
         }
-
+        
         // Then check if KJV is available
         try {
           const kjvResponse = await fetch('kjv_bible.json');
@@ -497,31 +528,31 @@
         } catch (e) {
           console.log('KJV translation not found, continuing with available translations');
         }
-
+        
         // Populate translations dropdown
         populateTranslations();
-
+        
         // If no translations were found
         if (availableTranslations.length === 0) {
           throw new Error('No Bible translations found. Please ensure at least one translation JSON file is available.');
         }
-
+        
         // Auto-select the first translation if available
         if (availableTranslations.length > 0) {
           translationSelect.value = availableTranslations[0].id;
           handleTranslationChange();
         }
-
+        
       } catch (error) {
         throw new Error(`Failed to load Bible translations: ${error.message}`);
       }
     }
-
+    
     // Populate translations dropdown
     function populateTranslations() {
       // Clear existing options
       translationSelect.innerHTML = '';
-
+      
       if (availableTranslations.length === 0) {
         const option = document.createElement('option');
         option.value = '';
@@ -529,13 +560,13 @@
         translationSelect.appendChild(option);
         return;
       }
-
+      
       // First option is placeholder
       const placeholder = document.createElement('option');
       placeholder.value = '';
       placeholder.textContent = 'Select a translation';
       translationSelect.appendChild(placeholder);
-
+      
       // Add translation options
       availableTranslations.forEach(translation => {
         const option = document.createElement('option');
@@ -544,29 +575,45 @@
         translationSelect.appendChild(option);
       });
     }
-
+    
+    // Sort books according to canonical order
+    function sortBooksCanonically(books) {
+      // Create a map of book positions
+      const bookOrderMap = {};
+      canonicalBookOrder.forEach((book, index) => {
+        bookOrderMap[book] = index;
+      });
+      
+      // Sort the books based on their position in the canonical order
+      return books.sort((a, b) => {
+        const aIndex = bookOrderMap[a] !== undefined ? bookOrderMap[a] : 999;
+        const bIndex = bookOrderMap[b] !== undefined ? bookOrderMap[b] : 999;
+        return aIndex - bIndex;
+      });
+    }
+    
     // Handle translation selection change
     function handleTranslationChange() {
       currentTranslationId = translationSelect.value;
-
+      
       // Reset book and chapter selections
       bookSelect.innerHTML = '<option value="">Select a Book</option>';
       chapterSelect.innerHTML = '<option value="">Select a Chapter</option>';
       currentBook = '';
       currentChapter = 0;
-
+      
       if (currentTranslationId) {
         // Enable book select
         bookSelect.disabled = false;
-
+        
         // Set translation info
         const translation = bibleData[currentTranslationId].translation;
         translationInfo.textContent = `${translation.abbreviation} - ${translation.name}`;
         currentTranslation.textContent = translation.abbreviation;
-
+        
         // Populate books for this translation
         populateBooks();
-
+        
         // Update Scripture display
         scriptureContent.innerHTML = `
           <div class="empty-state">
@@ -586,43 +633,46 @@
         `;
       }
     }
-
+    
     // Populate books dropdown for current translation
     function populateBooks() {
       if (!currentTranslationId || !bibleData[currentTranslationId] || !bibleData[currentTranslationId].books) return;
-
+      
       const books = bibleData[currentTranslationId].books;
-      booksList = Object.keys(books).sort();
-
+      const booksArray = Object.keys(books);
+      
+      // Sort books in canonical order instead of alphabetically
+      booksOrder = sortBooksCanonically(booksArray);
+      
       // Clear existing options (except the placeholder)
       bookSelect.innerHTML = '<option value="">Select a Book</option>';
-
-      // Add book options
-      booksList.forEach(book => {
+      
+      // Add book options in canonical order
+      booksOrder.forEach(book => {
         const option = document.createElement('option');
         option.value = book;
         option.textContent = book;
         bookSelect.appendChild(option);
       });
     }
-
+    
     // Handle book selection change
     function handleBookChange() {
       currentBook = bookSelect.value;
-
+      
       // Reset chapter selection
       chapterSelect.innerHTML = '<option value="">Select a Chapter</option>';
       currentChapter = 0;
-
+      
       if (currentBook) {
         // Enable chapter select
         chapterSelect.disabled = false;
-
+        
         // Get chapters for this book
         const chapters = Object.keys(bibleData[currentTranslationId].books[currentBook])
           .map(Number)
           .sort((a, b) => a - b);
-
+        
         // Add chapter options
         chapters.forEach(chapter => {
           const option = document.createElement('option');
@@ -630,10 +680,10 @@
           option.textContent = chapter;
           chapterSelect.appendChild(option);
         });
-
+        
         // Update reference display
         currentReference.textContent = currentBook;
-
+        
         // Update Scripture display
         scriptureContent.innerHTML = `
           <div class="empty-state">
@@ -644,7 +694,7 @@
         // Disable chapter select if no book is selected
         chapterSelect.disabled = true;
         currentReference.textContent = 'Select a passage';
-
+        
         // Update Scripture display
         scriptureContent.innerHTML = `
           <div class="empty-state">
@@ -653,11 +703,11 @@
         `;
       }
     }
-
+    
     // Handle chapter selection change
     function handleChapterChange() {
       currentChapter = parseInt(chapterSelect.value, 10);
-
+      
       if (currentChapter) {
         displayScripture(currentTranslationId, currentBook, currentChapter);
         updateNavigationButtons();
@@ -672,12 +722,12 @@
         nextChapterBtn.disabled = true;
       }
     }
-
+    
     // Display scripture content
     function displayScripture(translationId, book, chapter) {
       // Clear current content
       scriptureContent.innerHTML = '';
-
+      
       if (!translationId || !book || !chapter) {
         scriptureContent.innerHTML = `
           <div class="empty-state">
@@ -687,43 +737,46 @@
         currentReference.textContent = 'Select a passage';
         return;
       }
-
+      
       // Update reference display
       currentReference.textContent = `${book} ${chapter}`;
-
+      
       try {
         const verses = bibleData[translationId].books[book][chapter];
-
+        
         if (!verses) {
           throw new Error('No verses found for this reference');
         }
-
+        
         // Get all verse numbers and sort them numerically
         const verseNumbers = Object.keys(verses).map(Number).sort((a, b) => a - b);
-
+        
         // Create DOM elements for each verse
         verseNumbers.forEach(verseNum => {
           const verseElement = document.createElement('div');
           verseElement.className = 'verse';
-
+          
           const verseNumberSpan = document.createElement('span');
           verseNumberSpan.className = 'verse-number';
           verseNumberSpan.textContent = verseNum;
-
+          
+          // Fix any encoding issues in the verse text
+          const verseText = fixEncodingIssues(verses[verseNum]);
+          
           verseElement.appendChild(verseNumberSpan);
-          verseElement.appendChild(document.createTextNode(verses[verseNum]));
-
+          verseElement.appendChild(document.createTextNode(verseText));
+          
           scriptureContent.appendChild(verseElement);
         });
-
+        
         // Scroll to top of content
         scriptureContent.scrollTop = 0;
-
+        
       } catch (error) {
         scriptureContent.innerHTML = `<div class="error">Error: ${error.message}</div>`;
       }
     }
-
+    
     // Update navigation buttons based on current selection
     function updateNavigationButtons() {
       if (!currentTranslationId || !currentBook || !currentChapter) {
@@ -731,13 +784,13 @@
         nextChapterBtn.disabled = true;
         return;
       }
-
-      const bookIndex = booksList.indexOf(currentBook);
+      
+      const bookIndex = booksOrder.indexOf(currentBook);
       const chapters = Object.keys(bibleData[currentTranslationId].books[currentBook])
         .map(Number)
         .sort((a, b) => a - b);
       const currentChapterIndex = chapters.indexOf(currentChapter);
-
+      
       // Previous chapter logic
       if (currentChapterIndex > 0) {
         // There's a previous chapter in the same book
@@ -749,12 +802,12 @@
         // We're at the first chapter of the first book
         prevChapterBtn.disabled = true;
       }
-
+      
       // Next chapter logic
       if (currentChapterIndex < chapters.length - 1) {
         // There's a next chapter in the same book
         nextChapterBtn.disabled = false;
-      } else if (bookIndex < booksList.length - 1) {
+      } else if (bookIndex < booksOrder.length - 1) {
         // We need to go to the next book
         nextChapterBtn.disabled = false;
       } else {
@@ -762,17 +815,17 @@
         nextChapterBtn.disabled = true;
       }
     }
-
+    
     // Navigate to previous chapter
     function navigateToPrevChapter() {
       if (!currentTranslationId || !currentBook || !currentChapter) return;
-
-      const bookIndex = booksList.indexOf(currentBook);
+      
+      const bookIndex = booksOrder.indexOf(currentBook);
       const chapters = Object.keys(bibleData[currentTranslationId].books[currentBook])
         .map(Number)
         .sort((a, b) => a - b);
       const currentChapterIndex = chapters.indexOf(currentChapter);
-
+      
       if (currentChapterIndex > 0) {
         // Go to previous chapter in the same book
         const prevChapter = chapters[currentChapterIndex - 1];
@@ -780,66 +833,67 @@
         currentChapter = prevChapter;
       } else if (bookIndex > 0) {
         // Go to the last chapter of the previous book
-        const prevBook = booksList[bookIndex - 1];
+        const prevBook = booksOrder[bookIndex - 1];
         const prevBookChapters = Object.keys(bibleData[currentTranslationId].books[prevBook])
           .map(Number)
           .sort((a, b) => a - b);
         const lastChapter = prevBookChapters[prevBookChapters.length - 1];
-
+        
         // Update book select
         bookSelect.value = prevBook;
         currentBook = prevBook;
-
+        
         // Rebuild chapter select for this book
         handleBookChange();
-
+        
         // Set to last chapter
         chapterSelect.value = lastChapter;
         currentChapter = lastChapter;
       }
-
+      
       displayScripture(currentTranslationId, currentBook, currentChapter);
       updateNavigationButtons();
     }
-
+    
     // Navigate to next chapter
     function navigateToNextChapter() {
       if (!currentTranslationId || !currentBook || !currentChapter) return;
-
-      const bookIndex = booksList.indexOf(currentBook);
+      
+      const bookIndex = booksOrder.indexOf(currentBook);
       const chapters = Object.keys(bibleData[currentTranslationId].books[currentBook])
         .map(Number)
         .sort((a, b) => a - b);
       const currentChapterIndex = chapters.indexOf(currentChapter);
-
+      
       if (currentChapterIndex < chapters.length - 1) {
         // Go to next chapter in the same book
         const nextChapter = chapters[currentChapterIndex + 1];
         chapterSelect.value = nextChapter;
         currentChapter = nextChapter;
-      } else if (bookIndex < booksList.length - 1) {
+      } else if (bookIndex < booksOrder.length - 1) {
         // Go to the first chapter of the next book
-        const nextBook = booksList[bookIndex + 1];
+        const nextBook = booksOrder[bookIndex + 1];
         const nextBookChapters = Object.keys(bibleData[currentTranslationId].books[nextBook])
           .map(Number)
           .sort((a, b) => a - b);
         const firstChapter = nextBookChapters[0];
-
+        
         // Update book select
         bookSelect.value = nextBook;
         currentBook = nextBook;
-
+        
         // Rebuild chapter select for this book
         handleBookChange();
-
+        
         // Set to first chapter
         chapterSelect.value = firstChapter;
         currentChapter = firstChapter;
       }
-
+      
       displayScripture(currentTranslationId, currentBook, currentChapter);
       updateNavigationButtons();
     }
+    
     // Function to handle window resize for responsive column layout
     function handleResize() {
       if (window.innerWidth >= 1200) {
@@ -853,7 +907,7 @@
         scriptureContent.classList.remove('three-columns');
       }
     }
-
+    
     // Load translation data from a specified filename
     async function loadTranslation(filename, translationId) {
       try {
@@ -861,10 +915,10 @@
         if (!response.ok) {
           throw new Error(`Failed to load ${filename}`);
         }
-
+        
         const data = await response.json();
         bibleData[translationId] = data;
-
+        
         return {
           id: translationId,
           name: data.translation.name,
@@ -875,44 +929,44 @@
         return null;
       }
     }
-
+    
     // Create a function to add Bible translations dynamically
     async function addTranslation(filename, id) {
       try {
         // Load the translation
         const translation = await loadTranslation(filename, id);
-
+        
         if (translation) {
           // Check if this translation is already in the list
           const exists = availableTranslations.some(t => t.id === translation.id);
-
+          
           if (!exists) {
             // Add to available translations
             availableTranslations.push(translation);
-
+            
             // Update the translations dropdown
             populateTranslations();
-
+            
             // If this is the first translation, select it
             if (availableTranslations.length === 1) {
               translationSelect.value = translation.id;
               handleTranslationChange();
             }
-
+            
             return true;
           }
         }
-
+        
         return false;
       } catch (error) {
         console.error('Error adding translation:', error);
         return false;
       }
     }
-
+    
     // Add event listener for window resize
     window.addEventListener('resize', handleResize);
-
+    
     // Initialize the app when the page loads
     document.addEventListener('DOMContentLoaded', () => {
       initApp();
