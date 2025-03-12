@@ -61,7 +61,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             transition: all 0.3s;
         }
         
@@ -93,6 +93,85 @@
             color: var(--text-color);
             border: 1px solid var(--accent-color);
             border-radius: 4px;
+        }
+        
+        .folders-container {
+            margin-bottom: 15px;
+        }
+        
+        .folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+        
+        .folder-title {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .folder-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .folder-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        
+        .folder-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .folder-icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .folder-item {
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .folder-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .folder-item.active {
+            background-color: var(--primary-color);
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .folder-item-name {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .folder-count {
+            background-color: var(--card-color);
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-size: 0.7rem;
         }
         
         .notes-container {
@@ -163,7 +242,7 @@
             gap: 10px;
         }
         
-        .edit-btn, .delete-btn, .save-btn, .cancel-btn, .style-btn {
+        .edit-btn, .delete-btn, .save-btn, .cancel-btn, .style-btn, .backup-btn, .restore-btn, .folder-manage-btn {
             padding: 8px 15px;
             border: none;
             border-radius: 4px;
@@ -193,6 +272,21 @@
         
         .style-btn {
             background-color: #9b5de5;
+            color: white;
+        }
+        
+        .backup-btn {
+            background-color: #fca311;
+            color: #000;
+        }
+        
+        .restore-btn {
+            background-color: #3a86ff;
+            color: white;
+        }
+        
+        .folder-manage-btn {
+            background-color: #5e60ce;
             color: white;
         }
         
@@ -261,6 +355,23 @@
         .remove-tag {
             margin-left: 5px;
             cursor: pointer;
+        }
+        
+        .folder-selector {
+            padding: 10px;
+            background-color: var(--card-color);
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+            margin-bottom: 15px;
+        }
+        
+        .folder-selector select {
+            width: 100%;
+            padding: 5px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
         }
         
         .relations-container {
@@ -377,7 +488,7 @@
         
         .related-item {
             background-color: var(--card-color);
-            padding: a 10px;
+            padding: 10px;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
@@ -523,8 +634,10 @@
         }
         
         .settings-container {
-            margin-top: 20px;
+            margin-top: 0px;
             margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
         }
         
         .settings-btn {
@@ -537,7 +650,7 @@
             padding: 8px;
             border-radius: 4px;
             cursor: pointer;
-            width: 100%;
+            flex: 1;
             font-weight: bold;
             gap: 5px;
         }
@@ -545,6 +658,237 @@
         .settings-icon {
             width: 16px;
             height: 16px;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .toast.success {
+            border-left-color: #2a9d8f;
+        }
+        
+        .toast.error {
+            border-left-color: #e63946;
+        }
+        
+        .toast.info {
+            border-left-color: #3a86ff;
+        }
+        
+        .toast.warning {
+            border-left-color: #fca311;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Backup Modal */
+        .backup-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .backup-option {
+            background-color: var(--primary-color);
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .backup-option-header {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .backup-option-description {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+        
+        .backup-option-btn {
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            align-self: flex-start;
+        }
+        
+        #importBackupFile {
+            display: none;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .modal-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .stats-container {
+            margin-top: 15px;
+            background-color: var(--primary-color);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .stats-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--accent-color);
+        }
+        
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+        
+        /* Folder Modal */
+        .folder-list {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .folder-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--primary-color);
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        
+        .folder-list-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .folder-list-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .folder-list-actions button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        
+        .folder-list-actions button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .folder-form {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+        }
+        
+        .folder-form-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .folder-form-input {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .folder-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .folder-form-actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .folder-submit {
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+        }
+        
+        .folder-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .folder-path {
+            margin-bottom: 15px;
+            padding: 5px 0;
+            border-bottom: 1px dashed var(--accent-color);
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+        
+        .folder-breadcrumb {
+            display: inline-block;
+            cursor: pointer;
+            padding: 3px 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        
+        .folder-breadcrumb:hover {
+            background-color: var(--primary-color);
         }
         
         @media (max-width: 768px) {
@@ -566,6 +910,10 @@
             .style-packs {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
+            
+            .settings-container {
+                flex-direction: column;
+            }
         }
     </style>
     <!-- Custom style will be injected here -->
@@ -574,14 +922,31 @@
 <body>
     <div class="sidebar">
         <div class="logo">Fantasy Novel Planner</div>
-        <button class="create-btn" id="createNoteBtn">Create New Note</button>
+        <div class="settings-container">
+            <button class="create-btn" id="createNoteBtn" style="margin-bottom: 0;">Create Note</button>
+        </div>
         <div class="settings-container">
             <button class="settings-btn" id="styleSettingsBtn">
                 <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
                     <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
                 </svg>
-                Style Settings
+                Style
+            </button>
+            <button class="settings-btn" id="backupSettingsBtn" style="background-color: #fca311; color: #000;">
+                <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 9l-7 7-7-7" />
+                    <path d="M12 16V4" />
+                    <rect x="5" y="20" width="14" height="0" />
+                    <path d="M4 20h16" />
+                </svg>
+                Backup
+            </button>
+            <button class="settings-btn" id="folderSettingsBtn" style="background-color: #5e60ce;">
+                <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+                Folders
             </button>
         </div>
         <div class="filter-container">
@@ -591,6 +956,9 @@
         </div>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search notes...">
+        </div>
+        <div class="folders-container" id="folderTreeContainer">
+            <!-- Folder tree will be rendered here -->
         </div>
         <div class="notes-container" id="notesContainer"></div>
     </div>
@@ -633,6 +1001,112 @@
             </div>
         </div>
     </div>
+    
+    <!-- Backup Modal -->
+    <div id="backupModal" style="display: none;" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Backup & Restore</div>
+                <button class="close-modal" id="closeBackupModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p>Create backups of your novel planning data or restore from a previous backup.</p>
+                
+                <div class="stats-container">
+                    <div class="stats-title">Current Data</div>
+                    <div class="stats-item">
+                        <span>Notes:</span>
+                        <span id="noteCount">0</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>Folders:</span>
+                        <span id="folderCount">0</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>Tags:</span>
+                        <span id="tagCount">0</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>Last modified:</span>
+                        <span id="lastModified">Never</span>
+                    </div>
+                </div>
+                
+                <div class="backup-options">
+                    <div class="backup-option">
+                        <div class="backup-option-header">Export Backup</div>
+                        <div class="backup-option-description">
+                            Download all your notes and folders as a JSON file to keep as a backup or transfer to another device.
+                        </div>
+                        <button id="exportBackupBtn" class="backup-option-btn">Export to JSON</button>
+                    </div>
+                    
+                    <div class="backup-option">
+                        <div class="backup-option-header">Import Backup</div>
+                        <div class="backup-option-description">
+                            Restore your notes and folders from a previously exported JSON backup file.
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <input type="file" id="importBackupFile" accept=".json">
+                            <label for="importBackupFile" class="file-input-label">Choose File</label>
+                            <span id="selectedFileName">No file selected</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button id="mergeBackupBtn" class="backup-option-btn" style="background-color: #3a86ff;">Merge with Current</button>
+                            <button id="replaceBackupBtn" class="backup-option-btn" style="background-color: #e63946;">Replace All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Folder Management Modal -->
+    <div id="folderModal" style="display: none;" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Folder Management</div>
+                <button class="close-modal" id="closeFolderModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p>Create, rename, and delete folders to organize your notes.</p>
+                
+                <div id="folderForm" style="display: none;" class="folder-form">
+                    <div class="folder-form-title">Add New Folder</div>
+                    <input type="text" id="folderNameInput" class="folder-form-input" placeholder="Folder name...">
+                    <div class="folder-form-actions">
+                        <button id="cancelFolderBtn" class="folder-cancel">Cancel</button>
+                        <button id="saveFolderBtn" class="folder-submit">Save Folder</button>
+                    </div>
+                </div>
+                
+                <div id="folderRenameForm" style="display: none;" class="folder-form">
+                    <div class="folder-form-title">Rename Folder</div>
+                    <input type="text" id="folderRenameInput" class="folder-form-input" placeholder="New folder name...">
+                    <input type="hidden" id="folderRenameId">
+                    <div class="folder-form-actions">
+                        <button id="cancelRenameBtn" class="folder-cancel">Cancel</button>
+                        <button id="saveRenameBtn" class="folder-submit">Save</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Your Folders</h3>
+                    <button id="addFolderBtn" class="folder-option-btn" style="background-color: var(--accent-color); color: var(--secondary-color); border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        Add Folder
+                    </button>
+                </div>
+                
+                <div class="folder-list" id="folderListContainer">
+                    <!-- Folders will be listed here -->
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
     <script>
         // Main application logic
@@ -640,45 +1114,80 @@
             // DOM Elements
             const createNoteBtn = document.getElementById('createNoteBtn');
             const notesContainer = document.getElementById('notesContainer');
+            const folderTreeContainer = document.getElementById('folderTreeContainer');
             const mainContent = document.getElementById('mainContent');
             const noNoteSelected = document.getElementById('noNoteSelected');
             const tagFilter = document.getElementById('tagFilter');
             const searchInput = document.getElementById('searchInput');
             const styleSettingsBtn = document.getElementById('styleSettingsBtn');
+            const backupSettingsBtn = document.getElementById('backupSettingsBtn');
+            const folderSettingsBtn = document.getElementById('folderSettingsBtn');
             const styleModal = document.getElementById('styleModal');
+            const backupModal = document.getElementById('backupModal');
+            const folderModal = document.getElementById('folderModal');
             const closeStyleModal = document.getElementById('closeStyleModal');
+            const closeBackupModal = document.getElementById('closeBackupModal');
+            const closeFolderModal = document.getElementById('closeFolderModal');
             const stylePacksContainer = document.getElementById('stylePacksContainer');
             const addCustomStyleBtn = document.getElementById('addCustomStyle');
             const customStyleURL = document.getElementById('customStyleURL');
             const customStyleFile = document.getElementById('customStyleFile');
             const customStyleText = document.getElementById('customStyleText');
             const saveCustomStyleBtn = document.getElementById('saveCustomStyle');
+            const exportBackupBtn = document.getElementById('exportBackupBtn');
+            const importBackupFile = document.getElementById('importBackupFile');
+            const selectedFileName = document.getElementById('selectedFileName');
+            const mergeBackupBtn = document.getElementById('mergeBackupBtn');
+            const replaceBackupBtn = document.getElementById('replaceBackupBtn');
+            const noteCount = document.getElementById('noteCount');
+            const folderCount = document.getElementById('folderCount');
+            const tagCount = document.getElementById('tagCount');
+            const lastModified = document.getElementById('lastModified');
+            const folderListContainer = document.getElementById('folderListContainer');
+            const addFolderBtn = document.getElementById('addFolderBtn');
+            const folderForm = document.getElementById('folderForm');
+            const folderNameInput = document.getElementById('folderNameInput');
+            const saveFolderBtn = document.getElementById('saveFolderBtn');
+            const cancelFolderBtn = document.getElementById('cancelFolderBtn');
+            const folderRenameForm = document.getElementById('folderRenameForm');
+            const folderRenameInput = document.getElementById('folderRenameInput');
+            const folderRenameId = document.getElementById('folderRenameId');
+            const saveRenameBtn = document.getElementById('saveRenameBtn');
+            const cancelRenameBtn = document.getElementById('cancelRenameBtn');
+            const toast = document.getElementById('toast');
             
             // State
             let notes = [];
+            let folders = [];
             let currentNoteId = null;
+            let currentFolderId = 'all'; // 'all' for all notes, or folder ID
             let isEditing = false;
             let db;
             
             // IndexedDB setup
             const DB_NAME = 'fantasyPlannerDB';
             const STORE_NAME = 'notes';
+            const FOLDER_STORE = 'folders';
             const SETTINGS_STORE = 'settings';
             
             // Initialize IndexedDB
             function initDB() {
                 return new Promise((resolve, reject) => {
-                    const request = indexedDB.open(DB_NAME, 1);
+                    const request = indexedDB.open(DB_NAME, 2); // Upgraded version to add folder store
                     
                     request.onerror = event => {
                         console.error("IndexedDB error:", event.target.errorCode);
                         reject('IndexedDB error: ' + event.target.errorCode);
                         
                         // Fallback to localStorage if IndexedDB fails
-                        alert("Unable to access IndexedDB. Some browsers restrict it in private browsing or when opening files directly. Falling back to localStorage, but data may not persist on mobile devices.");
+                        showToast("Unable to access IndexedDB. Falling back to localStorage.", "warning");
                         notes = JSON.parse(localStorage.getItem('fantasyNotes')) || [];
+                        folders = JSON.parse(localStorage.getItem('fantasyFolders')) || [];
+                        initializeFolders();
                         renderNotesList();
+                        renderFolderTree();
                         updateTagOptions();
+                        updateStats();
                         resolve();
                     };
                     
@@ -686,6 +1195,9 @@
                         const db = event.target.result;
                         if (!db.objectStoreNames.contains(STORE_NAME)) {
                             db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                        }
+                        if (!db.objectStoreNames.contains(FOLDER_STORE)) {
+                            db.createObjectStore(FOLDER_STORE, { keyPath: 'id' });
                         }
                         if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
                             db.createObjectStore(SETTINGS_STORE, { keyPath: 'id' });
@@ -696,11 +1208,19 @@
                         db = event.target.result;
                         console.log("IndexedDB initialized successfully");
                         
-                        // Load notes
-                        loadNotes().then(loadedNotes => {
+                        // Load notes and folders
+                        Promise.all([
+                            loadNotes(),
+                            loadFolders()
+                        ]).then(([loadedNotes, loadedFolders]) => {
                             notes = loadedNotes;
+                            folders = loadedFolders;
+                            
+                            initializeFolders();
                             renderNotesList();
+                            renderFolderTree();
                             updateTagOptions();
+                            updateStats();
                             
                             // Load saved style settings
                             loadStyleSettings().then(styleSettings => {
@@ -711,18 +1231,42 @@
                             
                             resolve();
                         }).catch(error => {
-                            console.error("Error loading notes:", error);
+                            console.error("Error loading data:", error);
                             reject(error);
                         });
                     };
                 });
             }
             
+            // Make sure we have at least the root folder
+            function initializeFolders() {
+                if (folders.length === 0) {
+                    folders = [
+                        {
+                            id: 'root',
+                            name: 'All Notes',
+                            parentId: null,
+                            created: new Date().toISOString(),
+                            updated: new Date().toISOString()
+                        }
+                    ];
+                    saveFolders();
+                }
+                
+                // If notes don't have a folderId, assign them to the root folder
+                notes.forEach(note => {
+                    if (!note.folderId) {
+                        note.folderId = 'root';
+                    }
+                });
+                saveNotes();
+            }
+            
             // Load notes from IndexedDB
             function loadNotes() {
                 return new Promise((resolve, reject) => {
                     if (!db) {
-                        return resolve([]);
+                        return resolve(JSON.parse(localStorage.getItem('fantasyNotes')) || []);
                     }
                     
                     try {
@@ -742,6 +1286,30 @@
                 });
             }
             
+            // Load folders from IndexedDB
+            function loadFolders() {
+                return new Promise((resolve, reject) => {
+                    if (!db) {
+                        return resolve(JSON.parse(localStorage.getItem('fantasyFolders')) || []);
+                    }
+                    
+                    try {
+                        const transaction = db.transaction([FOLDER_STORE], 'readonly');
+                        const store = transaction.objectStore(FOLDER_STORE);
+                        const request = store.getAll();
+                        
+                        request.onsuccess = () => resolve(request.result || []);
+                        request.onerror = (event) => {
+                            console.error("Error loading folders:", event);
+                            reject('Error loading folders');
+                        };
+                    } catch (error) {
+                        console.error("Transaction error:", error);
+                        reject(error);
+                    }
+                });
+            }
+            
             // Save notes to IndexedDB
             function saveNotesToDB() {
                 return new Promise((resolve, reject) => {
@@ -749,6 +1317,7 @@
                         // Fallback to localStorage
                         localStorage.setItem('fantasyNotes', JSON.stringify(notes));
                         updateTagOptions();
+                        updateStats();
                         return resolve();
                     }
                     
@@ -770,6 +1339,7 @@
                                     completed++;
                                     if (completed === notes.length) {
                                         updateTagOptions();
+                                        updateStats();
                                         resolve();
                                     }
                                 };
@@ -783,6 +1353,7 @@
                             // If no notes, still resolve
                             if (notes.length === 0) {
                                 updateTagOptions();
+                                updateStats();
                                 resolve();
                             }
                         };
@@ -802,19 +1373,124 @@
                         // Fallback to localStorage
                         localStorage.setItem('fantasyNotes', JSON.stringify(notes));
                         updateTagOptions();
+                        updateStats();
                         resolve();
                     }
                 });
             }
             
-            // Simplified save function for the app
+            // Save folders to IndexedDB
+            function saveFoldersToDB() {
+                return new Promise((resolve, reject) => {
+                    if (!db) {
+                        // Fallback to localStorage
+                        localStorage.setItem('fantasyFolders', JSON.stringify(folders));
+                        updateStats();
+                        return resolve();
+                    }
+                    
+                    try {
+                        const transaction = db.transaction([FOLDER_STORE], 'readwrite');
+                        const store = transaction.objectStore(FOLDER_STORE);
+                        
+                        // Clear existing folders
+                        const clearRequest = store.clear();
+                        
+                        clearRequest.onsuccess = () => {
+                            // Add all folders
+                            let completed = 0;
+                            
+                            folders.forEach(folder => {
+                                const addRequest = store.add(folder);
+                                
+                                addRequest.onsuccess = () => {
+                                    completed++;
+                                    if (completed === folders.length) {
+                                        updateStats();
+                                        resolve();
+                                    }
+                                };
+                                
+                                addRequest.onerror = (event) => {
+                                    console.error("Error adding folder:", event);
+                                    reject('Error adding folder');
+                                };
+                            });
+                            
+                            // If no folders, still resolve
+                            if (folders.length === 0) {
+                                updateStats();
+                                resolve();
+                            }
+                        };
+                        
+                        clearRequest.onerror = (event) => {
+                            console.error("Error clearing folders:", event);
+                            reject('Error clearing folders');
+                        };
+                        
+                        transaction.onerror = (event) => {
+                            console.error("Transaction error:", event);
+                            reject('Transaction error');
+                        };
+                    } catch (error) {
+                        console.error("Transaction creation error:", error);
+                        
+                        // Fallback to localStorage
+                        localStorage.setItem('fantasyFolders', JSON.stringify(folders));
+                        updateStats();
+                        resolve();
+                    }
+                });
+            }
+            
+            // Simplified save functions for the app
             function saveNotes() {
                 saveNotesToDB().then(() => {
                     console.log("Notes saved successfully");
                 }).catch(error => {
                     console.error("Error saving notes:", error);
-                    alert("There was an error saving your notes. Some data may not be preserved.");
+                    showToast("There was an error saving your notes. Some data may not be preserved.", "error");
                 });
+            }
+            
+            function saveFolders() {
+                saveFoldersToDB().then(() => {
+                    console.log("Folders saved successfully");
+                    renderFolderTree();
+                }).catch(error => {
+                    console.error("Error saving folders:", error);
+                    showToast("There was an error saving your folders. Some data may not be preserved.", "error");
+                });
+            }
+            
+            // Update stats for backup modal
+            function updateStats() {
+                if (noteCount) {
+                    noteCount.textContent = notes.length;
+                    folderCount.textContent = folders.length;
+                    
+                    const allTags = new Set();
+                    let latestUpdate = null;
+                    
+                    notes.forEach(note => {
+                        note.tags.forEach(tag => allTags.add(tag));
+                        
+                        const noteDate = new Date(note.updated);
+                        if (!latestUpdate || noteDate > latestUpdate) {
+                            latestUpdate = noteDate;
+                        }
+                    });
+                    
+                    tagCount.textContent = allTags.size;
+                    
+                    if (latestUpdate) {
+                        lastModified.textContent = latestUpdate.toLocaleDateString() + ' ' + 
+                                                   latestUpdate.toLocaleTimeString();
+                    } else {
+                        lastModified.textContent = 'Never';
+                    }
+                }
             }
             
             // Style pack management
@@ -1120,7 +1796,7 @@
                     })
                     .catch(error => {
                         console.error("Error loading style from URL:", error);
-                        alert("Unable to load style from that URL. Please check the URL and try again.");
+                        showToast("Unable to load style from that URL. Please check the URL and try again.", "error");
                     });
             }
             
@@ -1132,7 +1808,7 @@
                     addCustomStyleFromText(css, file.name.replace('.css', ''));
                 };
                 reader.onerror = () => {
-                    alert("Error reading file. Please try again with a different file.");
+                    showToast("Error reading file. Please try again with a different file.", "error");
                 };
                 reader.readAsText(file);
             }
@@ -1177,9 +1853,548 @@
                 
                 // Update the UI
                 renderStylePacks();
+                showToast("Custom style added successfully!", "success");
                 
                 return style;
             }
+            
+            // Toast notification function
+            function showToast(message, type = 'info') {
+                toast.textContent = message;
+                toast.className = 'toast ' + type;
+                
+                // Add show class to make it visible
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 10);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Folder Management Functions
+            function addFolder(name, parentId = 'root') {
+                const newFolder = {
+                    id: 'folder-' + Date.now(),
+                    name: name.trim(),
+                    parentId: parentId,
+                    created: new Date().toISOString(),
+                    updated: new Date().toISOString()
+                };
+                
+                folders.push(newFolder);
+                saveFolders();
+                
+                return newFolder;
+            }
+            
+            function updateFolder(id, newName) {
+                const folder = folders.find(f => f.id === id);
+                if (folder) {
+                    folder.name = newName.trim();
+                    folder.updated = new Date().toISOString();
+                    saveFolders();
+                }
+            }
+            
+            function deleteFolder(id) {
+                // Get all descendant folder IDs to delete
+                const descendantIds = getAllDescendantFolderIds(id);
+                const allFolderIdsToDelete = [id, ...descendantIds];
+                
+                // Move all notes in these folders to the parent folder
+                const folderToDelete = folders.find(f => f.id === id);
+                const parentFolderId = folderToDelete ? folderToDelete.parentId || 'root' : 'root';
+                
+                notes.forEach(note => {
+                    if (allFolderIdsToDelete.includes(note.folderId)) {
+                        note.folderId = parentFolderId;
+                    }
+                });
+                
+                // Remove the folders
+                folders = folders.filter(f => !allFolderIdsToDelete.includes(f.id));
+                
+                saveFolders();
+                saveNotes();
+                renderNotesList();
+            }
+            
+            function getAllDescendantFolderIds(folderId) {
+                const descendants = [];
+                
+                // Find direct children
+                const children = folders.filter(f => f.parentId === folderId);
+                
+                // For each child, add it and its descendants
+                children.forEach(child => {
+                    descendants.push(child.id);
+                    descendants.push(...getAllDescendantFolderIds(child.id));
+                });
+                
+                return descendants;
+            }
+            
+            function getFolderById(id) {
+                return folders.find(f => f.id === id);
+            }
+            
+            function getFolderPath(folderId) {
+                const path = [];
+                let currentId = folderId;
+                
+                while (currentId) {
+                    const folder = getFolderById(currentId);
+                    if (!folder) break;
+                    
+                    path.unshift(folder);
+                    currentId = folder.parentId;
+                }
+                
+                return path;
+            }
+            
+            function getNotesInFolder(folderId, includeSubfolders = false) {
+                if (folderId === 'all') {
+                    return notes;
+                }
+                
+                if (!includeSubfolders) {
+                    return notes.filter(note => note.folderId === folderId);
+                }
+                
+                // Include notes in subfolders
+                const folderIds = [folderId, ...getAllDescendantFolderIds(folderId)];
+                return notes.filter(note => folderIds.includes(note.folderId));
+            }
+            
+            function getChildFolders(parentId) {
+                return folders.filter(folder => folder.parentId === parentId)
+                    .sort((a, b) => a.name.localeCompare(b.name));
+            }
+            
+            // Render the folder tree in the sidebar
+            function renderFolderTree() {
+                folderTreeContainer.innerHTML = '';
+                
+                // Header with All Notes option
+                const folderHeader = document.createElement('div');
+                folderHeader.className = 'folder-header';
+                folderHeader.innerHTML = `
+                    <div class="folder-title">FOLDERS</div>
+                `;
+                folderTreeContainer.appendChild(folderHeader);
+                
+                // Add All Notes option
+                const allNotesItem = document.createElement('div');
+                allNotesItem.className = 'folder-item' + (currentFolderId === 'all' ? ' active' : '');
+                allNotesItem.innerHTML = `
+                    <div class="folder-item-name">
+                        <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                        </svg>
+                        All Notes
+                    </div>
+                    <div class="folder-count">${notes.length}</div>
+                `;
+                allNotesItem.addEventListener('click', () => {
+                    currentFolderId = 'all';
+                    renderNotesList();
+                    renderFolderTree();
+                });
+                folderTreeContainer.appendChild(allNotesItem);
+                
+                // Add root folders
+                const rootFolders = getChildFolders('root').filter(f => f.id !== 'root');
+                rootFolders.forEach(folder => {
+                    const folderElement = createFolderElement(folder);
+                    folderTreeContainer.appendChild(folderElement);
+                    
+                    // Recursively add subfolders
+                    renderSubFolders(folder.id, folderElement, 1);
+                });
+            }
+            
+            function renderSubFolders(parentId, parentElement, level) {
+                const subFolders = getChildFolders(parentId);
+                
+                if (subFolders.length > 0) {
+                    const subFolderContainer = document.createElement('div');
+                    subFolderContainer.className = 'subfolder-container';
+                    subFolderContainer.style.paddingLeft = (level * 15) + 'px';
+                    
+                    subFolders.forEach(folder => {
+                        const folderElement = createFolderElement(folder);
+                        subFolderContainer.appendChild(folderElement);
+                        
+                        // Recursively render subfolders
+                        renderSubFolders(folder.id, subFolderContainer, level + 1);
+                    });
+                    
+                    parentElement.appendChild(subFolderContainer);
+                }
+            }
+            
+            function createFolderElement(folder) {
+                const folderNotes = getNotesInFolder(folder.id, true);
+                const folderElement = document.createElement('div');
+                folderElement.className = 'folder-item' + (currentFolderId === folder.id ? ' active' : '');
+                folderElement.innerHTML = `
+                    <div class="folder-item-name">
+                        <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                        </svg>
+                        ${folder.name}
+                    </div>
+                    <div class="folder-count">${folderNotes.length}</div>
+                `;
+                
+                folderElement.addEventListener('click', () => {
+                    currentFolderId = folder.id;
+                    renderNotesList();
+                    renderFolderTree();
+                });
+                
+                return folderElement;
+            }
+            
+            // Render the folder list in the folder management modal
+            function renderFolderList() {
+                folderListContainer.innerHTML = '';
+                
+                // Skip the root folder if it exists in the array
+                const displayFolders = folders.filter(f => f.id !== 'root');
+                
+                if (displayFolders.length === 0) {
+                    folderListContainer.innerHTML = '<p>No folders created yet.</p>';
+                    return;
+                }
+                
+                // Sort folders by name
+                displayFolders.sort((a, b) => a.name.localeCompare(b.name));
+                
+                displayFolders.forEach(folder => {
+                    const folderPath = getFolderPath(folder.id)
+                        .map(f => f.name)
+                        .join(' > ');
+                    
+                    const folderItem = document.createElement('div');
+                    folderItem.className = 'folder-list-item';
+                    folderItem.innerHTML = `
+                        <div class="folder-list-name">
+                            <svg class="folder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                            </svg>
+                            ${folder.name}
+                        </div>
+                        <div class="folder-list-actions">
+                            <button class="rename-folder" data-id="${folder.id}" title="Rename">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                                </svg>
+                            </button>
+                            <button class="delete-folder" data-id="${folder.id}" title="Delete">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    
+                    folderListContainer.appendChild(folderItem);
+                });
+                
+                // Add event listeners to actions
+                document.querySelectorAll('.rename-folder').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const folderId = e.currentTarget.dataset.id;
+                        const folder = getFolderById(folderId);
+                        
+                        if (folder) {
+                            folderRenameId.value = folderId;
+                            folderRenameInput.value = folder.name;
+                            folderRenameForm.style.display = 'block';
+                            folderForm.style.display = 'none';
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.delete-folder').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const folderId = e.currentTarget.dataset.id;
+                        const folder = getFolderById(folderId);
+                        
+                        if (folder && confirm(`Are you sure you want to delete the folder "${folder.name}"? Notes inside will be moved to parent folder.`)) {
+                            deleteFolder(folderId);
+                            renderFolderList();
+                            if (currentFolderId === folderId) {
+                                currentFolderId = 'all';
+                                renderNotesList();
+                                renderFolderTree();
+                            }
+                            showToast(`Folder "${folder.name}" deleted`, "info");
+                        }
+                    });
+                });
+            }
+            
+            // Backup Export Function
+            function exportBackup() {
+                // Create a backup object with notes and folders
+                const backup = {
+                    notes: notes,
+                    folders: folders,
+                    version: "1.0",
+                    timestamp: new Date().toISOString(),
+                    type: "fantasy-novel-planner-backup"
+                };
+                
+                // Convert to JSON string
+                const backupJson = JSON.stringify(backup, null, 2);
+                
+                // Create a Blob with the JSON data
+                const blob = new Blob([backupJson], {type: 'application/json'});
+                
+                // Create a download link
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `novel-planner-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                
+                // Trigger download
+                document.body.appendChild(a);
+                a.click();
+                
+                // Clean up
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast("Backup file created successfully!", "success");
+            }
+            
+            // Backup Import Function
+            function importBackup(file, mergeMode = true) {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    try {
+                        const backupData = JSON.parse(e.target.result);
+                        
+                        // Validate the backup data
+                        if (!backupData.type || backupData.type !== "fantasy-novel-planner-backup") {
+                            throw new Error("Invalid backup file format");
+                        }
+                        
+                        // Ensure we have notes and folders arrays
+                        const importedNotes = Array.isArray(backupData.notes) ? backupData.notes : [];
+                        const importedFolders = Array.isArray(backupData.folders) ? backupData.folders : [];
+                        
+                        if (mergeMode) {
+                            // Process folders first (needed for notes)
+                            mergeFolders(importedFolders);
+                            
+                            // Then process notes
+                            mergeNotes(importedNotes);
+                            
+                            showToast(`Merged ${importedNotes.length} notes and ${importedFolders.length} folders`, "success");
+                        } else {
+                            // Just replace everything
+                            notes = importedNotes;
+                            folders = importedFolders;
+                            
+                            // Make sure we have a root folder
+                            initializeFolders();
+                            
+                            showToast(`Imported ${notes.length} notes and ${folders.length} folders`, "success");
+                        }
+                        
+                        // Save and update UI
+                        saveNotes();
+                        saveFolders();
+                        renderNotesList();
+                        renderFolderTree();
+                        updateTagOptions();
+                        updateStats();
+                        
+                        // Close the modal
+                        backupModal.style.display = 'none';
+                        
+                    } catch (error) {
+                        console.error("Error importing backup:", error);
+                        showToast("Error importing backup. Invalid file format.", "error");
+                    }
+                };
+                
+                reader.onerror = () => {
+                    showToast("Error reading backup file.", "error");
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            // Merge imported folders with existing folders
+            function mergeFolders(importedFolders) {
+                // Create a map of existing folders by ID
+                const existingFoldersMap = new Map();
+                folders.forEach(folder => {
+                    existingFoldersMap.set(folder.id, folder);
+                });
+                
+                // Process each imported folder
+                importedFolders.forEach(importedFolder => {
+                    if (!existingFoldersMap.has(importedFolder.id)) {
+                        // This is a new folder, add it
+                        folders.push(importedFolder);
+                    } else {
+                        // This folder already exists, keep the newer version
+                        const existingFolder = existingFoldersMap.get(importedFolder.id);
+                        const existingDate = new Date(existingFolder.updated);
+                        const importedDate = new Date(importedFolder.updated);
+                        
+                        if (importedDate > existingDate) {
+                            // Replace with newer version
+                            const index = folders.findIndex(f => f.id === importedFolder.id);
+                            if (index !== -1) {
+                                folders[index] = importedFolder;
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Merge imported notes with existing notes
+            function mergeNotes(importedNotes) {
+                // Create a map for quick lookup of existing notes
+                const existingNotesMap = new Map();
+                notes.forEach(note => {
+                    existingNotesMap.set(note.id, note);
+                });
+                
+                // Track which relations need to be updated
+                const relationUpdates = new Map();
+                
+                // First pass: add/update notes and collect relation changes
+                importedNotes.forEach(importedNote => {
+                    // Make sure the folder exists
+                    if (importedNote.folderId && !folders.some(f => f.id === importedNote.folderId)) {
+                        // Assign to root folder if the folder doesn't exist
+                        importedNote.folderId = 'root';
+                    }
+                    
+                    if (!existingNotesMap.has(importedNote.id)) {
+                        // New note - add it
+                        notes.push(importedNote);
+                        // Track the relations for this new note
+                        relationUpdates.set(importedNote.id, importedNote.relations || []);
+                    } else {
+                        // Existing note - check which is newer
+                        const existingNote = existingNotesMap.get(importedNote.id);
+                        const existingDate = new Date(existingNote.updated);
+                        const importedDate = new Date(importedNote.updated);
+                        
+                        if (importedDate > existingDate) {
+                            // Update with the newer version
+                            const index = notes.findIndex(n => n.id === importedNote.id);
+                            if (index !== -1) {
+                                notes[index] = importedNote;
+                                // Track the relations for this updated note
+                                relationUpdates.set(importedNote.id, importedNote.relations || []);
+                            }
+                        }
+                    }
+                });
+                
+                // Second pass: fix relations to make sure they only point to existing notes
+                relationUpdates.forEach((relations, noteId) => {
+                    const note = notes.find(n => n.id === noteId);
+                    if (note) {
+                        // Filter out relations to notes that don't exist
+                        note.relations = relations.filter(relatedId => 
+                            notes.some(n => n.id === relatedId)
+                        );
+                    }
+                });
+            }
+            
+            // Event Listeners for backup/restore
+            exportBackupBtn.addEventListener('click', exportBackup);
+            
+            // Import file selection
+            importBackupFile.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    selectedFileName.textContent = e.target.files[0].name;
+                } else {
+                    selectedFileName.textContent = "No file selected";
+                }
+            });
+            
+            // Merge backup button
+            mergeBackupBtn.addEventListener('click', () => {
+                if (importBackupFile.files.length === 0) {
+                    showToast("Please select a backup file first.", "warning");
+                    return;
+                }
+                
+                importBackup(importBackupFile.files[0], true);
+            });
+            
+            // Replace backup button
+            replaceBackupBtn.addEventListener('click', () => {
+                if (importBackupFile.files.length === 0) {
+                    showToast("Please select a backup file first.", "warning");
+                    return;
+                }
+                
+                if (confirm("This will replace all your current notes and folders with the backup data. This cannot be undone. Are you sure?")) {
+                    importBackup(importBackupFile.files[0], false);
+                }
+            });
+            
+            // Folder management event listeners
+            addFolderBtn.addEventListener('click', () => {
+                folderForm.style.display = 'block';
+                folderRenameForm.style.display = 'none';
+                folderNameInput.value = '';
+                folderNameInput.focus();
+            });
+            
+            saveFolderBtn.addEventListener('click', () => {
+                const folderName = folderNameInput.value.trim();
+                if (folderName) {
+                    addFolder(folderName);
+                    folderForm.style.display = 'none';
+                    renderFolderList();
+                    renderFolderTree();
+                    showToast(`Folder "${folderName}" created`, "success");
+                } else {
+                    showToast("Please enter a folder name", "warning");
+                }
+            });
+            
+            cancelFolderBtn.addEventListener('click', () => {
+                folderForm.style.display = 'none';
+            });
+            
+            saveRenameBtn.addEventListener('click', () => {
+                const folderId = folderRenameId.value;
+                const newName = folderRenameInput.value.trim();
+                
+                if (newName) {
+                    updateFolder(folderId, newName);
+                    folderRenameForm.style.display = 'none';
+                    renderFolderList();
+                    renderFolderTree();
+                    showToast(`Folder renamed to "${newName}"`, "success");
+                } else {
+                    showToast("Please enter a folder name", "warning");
+                }
+            });
+            
+            cancelRenameBtn.addEventListener('click', () => {
+                folderRenameForm.style.display = 'none';
+            });
             
             // Event Listeners for style packs
             styleSettingsBtn.addEventListener('click', () => {
@@ -1187,14 +2402,46 @@
                 styleModal.style.display = 'flex';
             });
             
+            backupSettingsBtn.addEventListener('click', () => {
+                updateStats();
+                backupModal.style.display = 'flex';
+            });
+            
+            folderSettingsBtn.addEventListener('click', () => {
+                renderFolderList();
+                folderModal.style.display = 'flex';
+                folderForm.style.display = 'none';
+                folderRenameForm.style.display = 'none';
+            });
+            
             closeStyleModal.addEventListener('click', () => {
                 styleModal.style.display = 'none';
             });
             
-            // Close modal when clicking outside
+            closeBackupModal.addEventListener('click', () => {
+                backupModal.style.display = 'none';
+            });
+            
+            closeFolderModal.addEventListener('click', () => {
+                folderModal.style.display = 'none';
+            });
+            
+            // Close modals when clicking outside
             styleModal.addEventListener('click', (e) => {
                 if (e.target === styleModal) {
                     styleModal.style.display = 'none';
+                }
+            });
+            
+            backupModal.addEventListener('click', (e) => {
+                if (e.target === backupModal) {
+                    backupModal.style.display = 'none';
+                }
+            });
+            
+            folderModal.addEventListener('click', (e) => {
+                if (e.target === folderModal) {
+                    folderModal.style.display = 'none';
                 }
             });
             
@@ -1244,6 +2491,7 @@
                     content: '# New Note\n\nStart writing your content here...',
                     tags: [],
                     relations: [],
+                    folderId: currentFolderId === 'all' ? 'root' : currentFolderId,
                     created: new Date().toISOString(),
                     updated: new Date().toISOString()
                 };
@@ -1260,7 +2508,16 @@
                 const filterTag = tagFilter.value;
                 const searchTerm = searchInput.value.toLowerCase();
                 
-                const filteredNotes = notes.filter(note => {
+                // Get notes based on current folder
+                let folderNotes = [];
+                if (currentFolderId === 'all') {
+                    folderNotes = notes;
+                } else {
+                    folderNotes = getNotesInFolder(currentFolderId, true);
+                }
+                
+                // Filter by tag and search term
+                const filteredNotes = folderNotes.filter(note => {
                     const matchesTag = !filterTag || note.tags.includes(filterTag);
                     const matchesSearch = !searchTerm || 
                         note.title.toLowerCase().includes(searchTerm) || 
@@ -1360,6 +2617,16 @@
                 
                 noNoteSelected.style.display = 'none';
                 
+                // Get folder path for breadcrumb
+                const folderPath = getFolderPath(note.folderId);
+                const folderPathHtml = folderPath.length > 0 ? `
+                    <div class="folder-path">
+                        Location: ${folderPath.map(f => 
+                            `<span class="folder-breadcrumb" data-id="${f.id}">${f.name}</span>`
+                        ).join(' > ')}
+                    </div>
+                ` : '';
+                
                 mainContent.innerHTML = `
                     <div class="content-header">
                         <div class="content-title">Editing: ${note.title}</div>
@@ -1369,8 +2636,21 @@
                         </div>
                     </div>
                     <div class="content-body">
+                        ${folderPathHtml}
+                        
                         <div class="note-editor">
                             <input type="text" class="note-input" id="noteTitleInput" placeholder="Note Title" value="${note.title}">
+                            
+                            <div class="folder-selector">
+                                <label for="folderSelect">Folder:</label>
+                                <select id="folderSelect">
+                                    <option value="root">Root</option>
+                                    ${folders.filter(f => f.id !== 'root').map(folder => {
+                                        const path = getFolderPath(folder.id).map(f => f.name).join(' > ');
+                                        return `<option value="${folder.id}" ${note.folderId === folder.id ? 'selected' : ''}>${path}</option>`;
+                                    }).join('')}
+                                </select>
+                            </div>
                             
                             <div class="tags-input-container" id="tagsContainer">
                                 ${note.tags.map(tag => `
@@ -1407,6 +2687,16 @@
                 // Set up event listeners for the editor
                 document.getElementById('saveNoteBtn').addEventListener('click', () => saveNote(noteId));
                 document.getElementById('cancelEditBtn').addEventListener('click', () => renderNoteViewer(noteId));
+                
+                // Folder breadcrumb navigation
+                document.querySelectorAll('.folder-breadcrumb').forEach(crumb => {
+                    crumb.addEventListener('click', () => {
+                        const folderId = crumb.dataset.id;
+                        currentFolderId = folderId;
+                        renderNotesList();
+                        renderFolderTree();
+                    });
+                });
                 
                 // Tags input
                 const tagsInput = document.getElementById('tagsInput');
@@ -1520,10 +2810,12 @@
                 
                 note.title = document.getElementById('noteTitleInput').value.trim() || 'Untitled';
                 note.content = document.getElementById('noteContentInput').value;
+                note.folderId = document.getElementById('folderSelect').value;
                 note.updated = new Date().toISOString();
                 
                 saveNotes();
                 renderNoteViewer(noteId);
+                showToast("Note saved successfully!", "success");
             }
             
             function renderNoteViewer(noteId) {
@@ -1539,6 +2831,16 @@
                 }
                 
                 noNoteSelected.style.display = 'none';
+                
+                // Get folder path for breadcrumb
+                const folderPath = getFolderPath(note.folderId);
+                const folderPathHtml = folderPath.length > 0 ? `
+                    <div class="folder-path">
+                        Location: ${folderPath.map(f => 
+                            `<span class="folder-breadcrumb" data-id="${f.id}">${f.name}</span>`
+                        ).join(' > ')}
+                    </div>
+                ` : '';
                 
                 // Prepare related notes
                 let relatedNotesHtml = '';
@@ -1571,6 +2873,8 @@
                         </div>
                     </div>
                     <div class="content-body">
+                        ${folderPathHtml}
+                        
                         ${note.tags.length > 0 ? `
                             <div class="note-tags" style="margin-bottom: 15px;">
                                 ${note.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
@@ -1588,6 +2892,16 @@
                 // Add event listeners
                 document.getElementById('editNoteBtn').addEventListener('click', () => renderNoteEditor(noteId));
                 document.getElementById('deleteNoteBtn').addEventListener('click', () => confirmDeleteNote(noteId));
+                
+                // Folder breadcrumb navigation
+                document.querySelectorAll('.folder-breadcrumb').forEach(crumb => {
+                    crumb.addEventListener('click', () => {
+                        const folderId = crumb.dataset.id;
+                        currentFolderId = folderId;
+                        renderNotesList();
+                        renderFolderTree();
+                    });
+                });
                 
                 // Add event listeners to related note items
                 document.querySelectorAll('.related-item').forEach(item => {
@@ -1616,6 +2930,7 @@
                 currentNoteId = null;
                 noNoteSelected.style.display = 'flex';
                 renderNotesList();
+                showToast("Note deleted successfully", "info");
             }
             
             function filterNotes() {
