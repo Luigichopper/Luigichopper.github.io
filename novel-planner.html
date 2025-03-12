@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Novel Planner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <style id="baseStyles">
+        :root {
+            --primary-color: #3a506b;
+            --secondary-color: #1c2541;
+            --accent-color: #5bc0be;
+            --text-color: #edf2f4;
+            --bg-color: #0b132b;
+            --card-color: #202e4a;
+            --hover-color: #48639c;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-headings: var(--font-main);
+            --content-width: 1200px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-color);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--accent-color);
+        }
+        
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            text-align: center;
+            font-family: var(--font-headings);
+        }
+        
+        .create-btn {
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .create-btn:hover {
+            background-color: #4ca8a7;
+        }
+        
+        .filter-container {
+            margin-bottom: 15px;
+        }
+        
+        .filter-container select {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+        }
+        
+        .search-container {
+            margin-bottom: 15px;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+        }
+        
+        .notes-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .note-card {
+            background-color: var(--card-color);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .note-card:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: var(--font-headings);
+        }
+        
+        .note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .tag {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .content-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: var(--font-headings);
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .edit-btn, .delete-btn, .save-btn, .cancel-btn, .style-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .edit-btn {
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+        }
+        
+        .delete-btn {
+            background-color: #e63946;
+            color: white;
+        }
+        
+        .save-btn {
+            background-color: #2a9d8f;
+            color: white;
+        }
+        
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .style-btn {
+            background-color: #9b5de5;
+            color: white;
+        }
+        
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .note-editor {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 15px;
+        }
+        
+        .note-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .note-textarea {
+            flex: 1;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            resize: none;
+            font-family: monospace;
+        }
+        
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--card-color);
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+        }
+        
+        .tags-input {
+            flex: 1;
+            min-width: 100px;
+            padding: 5px;
+            background-color: transparent;
+            color: var(--text-color);
+            border: none;
+            outline: none;
+        }
+        
+        .selected-tag {
+            display: flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .remove-tag {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .relations-container {
+            padding: 10px;
+            background-color: var(--card-color);
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+        }
+        
+        .relation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .relation-select {
+            flex: 1;
+            padding: 5px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        
+        .add-relation-btn {
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .remove-relation {
+            background-color: #e63946;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        
+        .markdown-content {
+            line-height: 1.6;
+            padding: 15px;
+            background-color: var(--card-color);
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+        }
+        
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            color: var(--accent-color);
+            font-family: var(--font-headings);
+        }
+        
+        .markdown-content p {
+            margin-bottom: 1em;
+        }
+        
+        .markdown-content ul, .markdown-content ol {
+            margin-left: 20px;
+            margin-bottom: 1em;
+        }
+        
+        .markdown-content code {
+            background-color: var(--secondary-color);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .markdown-content pre {
+            background-color: var(--secondary-color);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1em;
+        }
+        
+        .markdown-content blockquote {
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+            margin-left: 0;
+            color: #adb5bd;
+        }
+        
+        .markdown-content img {
+            max-width: 100%;
+        }
+        
+        .related-notes {
+            margin-top: 20px;
+        }
+        
+        .related-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+            font-family: var(--font-headings);
+        }
+        
+        .related-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .related-item {
+            background-color: var(--card-color);
+            padding: a 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .related-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .no-note-selected {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        /* Style Pack Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+            border: 1px solid var(--accent-color);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            font-family: var(--font-headings);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .style-packs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .style-pack {
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .style-pack.active {
+            border-color: var(--accent-color);
+        }
+        
+        .style-pack-preview {
+            height: 60px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .custom-style-section {
+            margin-top: 20px;
+            border-top: 1px solid var(--accent-color);
+            padding-top: 20px;
+        }
+        
+        .custom-style-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .custom-style-input {
+            padding: 8px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+        }
+        
+        .custom-style-btn {
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .settings-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .settings-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            gap: 5px;
+        }
+        
+        .settings-icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+                border-right: none;
+                border-bottom: 1px solid var(--accent-color);
+            }
+            
+            .main-content {
+                height: calc(100vh - 200px);
+            }
+            
+            .style-packs {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+    <!-- Custom style will be injected here -->
+    <style id="customStyles"></style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Fantasy Novel Planner</div>
+        <button class="create-btn" id="createNoteBtn">Create New Note</button>
+        <div class="settings-container">
+            <button class="settings-btn" id="styleSettingsBtn">
+                <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+                </svg>
+                Style Settings
+            </button>
+        </div>
+        <div class="filter-container">
+            <select id="tagFilter">
+                <option value="">All Tags</option>
+            </select>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search notes...">
+        </div>
+        <div class="notes-container" id="notesContainer"></div>
+    </div>
+    
+    <div class="main-content" id="mainContent">
+        <div class="no-note-selected" id="noNoteSelected">
+            <div class="empty-icon">📝</div>
+            <h2>No Note Selected</h2>
+            <p>Select a note from the sidebar or create a new one to begin</p>
+        </div>
+    </div>
+
+    <!-- Style Settings Modal -->
+    <div id="styleModal" style="display: none;" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Style Settings</div>
+                <button class="close-modal" id="closeStyleModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>Choose a Style Pack</h3>
+                <div class="style-packs" id="stylePacksContainer">
+                    <!-- Style packs will be added here -->
+                </div>
+                
+                <div class="custom-style-section">
+                    <h3>Add Custom Style</h3>
+                    <div class="custom-style-form">
+                        <input type="text" id="customStyleURL" class="custom-style-input" placeholder="Enter CSS URL...">
+                        <button id="addCustomStyle" class="custom-style-btn">Add Custom Style</button>
+                        
+                        <p>Or upload a CSS file:</p>
+                        <input type="file" id="customStyleFile" accept=".css">
+                        
+                        <h4>Create Custom Style</h4>
+                        <textarea id="customStyleText" class="note-textarea" style="height: 150px;" placeholder="Enter custom CSS..."></textarea>
+                        <button id="saveCustomStyle" class="custom-style-btn">Save Custom Style</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Main application logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const createNoteBtn = document.getElementById('createNoteBtn');
+            const notesContainer = document.getElementById('notesContainer');
+            const mainContent = document.getElementById('mainContent');
+            const noNoteSelected = document.getElementById('noNoteSelected');
+            const tagFilter = document.getElementById('tagFilter');
+            const searchInput = document.getElementById('searchInput');
+            const styleSettingsBtn = document.getElementById('styleSettingsBtn');
+            const styleModal = document.getElementById('styleModal');
+            const closeStyleModal = document.getElementById('closeStyleModal');
+            const stylePacksContainer = document.getElementById('stylePacksContainer');
+            const addCustomStyleBtn = document.getElementById('addCustomStyle');
+            const customStyleURL = document.getElementById('customStyleURL');
+            const customStyleFile = document.getElementById('customStyleFile');
+            const customStyleText = document.getElementById('customStyleText');
+            const saveCustomStyleBtn = document.getElementById('saveCustomStyle');
+            
+            // State
+            let notes = [];
+            let currentNoteId = null;
+            let isEditing = false;
+            let db;
+            
+            // IndexedDB setup
+            const DB_NAME = 'fantasyPlannerDB';
+            const STORE_NAME = 'notes';
+            const SETTINGS_STORE = 'settings';
+            
+            // Initialize IndexedDB
+            function initDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, 1);
+                    
+                    request.onerror = event => {
+                        console.error("IndexedDB error:", event.target.errorCode);
+                        reject('IndexedDB error: ' + event.target.errorCode);
+                        
+                        // Fallback to localStorage if IndexedDB fails
+                        alert("Unable to access IndexedDB. Some browsers restrict it in private browsing or when opening files directly. Falling back to localStorage, but data may not persist on mobile devices.");
+                        notes = JSON.parse(localStorage.getItem('fantasyNotes')) || [];
+                        renderNotesList();
+                        updateTagOptions();
+                        resolve();
+                    };
+                    
+                    request.onupgradeneeded = event => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(STORE_NAME)) {
+                            db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                        }
+                        if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
+                            db.createObjectStore(SETTINGS_STORE, { keyPath: 'id' });
+                        }
+                    };
+                    
+                    request.onsuccess = event => {
+                        db = event.target.result;
+                        console.log("IndexedDB initialized successfully");
+                        
+                        // Load notes
+                        loadNotes().then(loadedNotes => {
+                            notes = loadedNotes;
+                            renderNotesList();
+                            updateTagOptions();
+                            
+                            // Load saved style settings
+                            loadStyleSettings().then(styleSettings => {
+                                if (styleSettings && styleSettings.activeStyle) {
+                                    applyStyle(styleSettings.activeStyle);
+                                }
+                            });
+                            
+                            resolve();
+                        }).catch(error => {
+                            console.error("Error loading notes:", error);
+                            reject(error);
+                        });
+                    };
+                });
+            }
+            
+            // Load notes from IndexedDB
+            function loadNotes() {
+                return new Promise((resolve, reject) => {
+                    if (!db) {
+                        return resolve([]);
+                    }
+                    
+                    try {
+                        const transaction = db.transaction([STORE_NAME], 'readonly');
+                        const store = transaction.objectStore(STORE_NAME);
+                        const request = store.getAll();
+                        
+                        request.onsuccess = () => resolve(request.result || []);
+                        request.onerror = (event) => {
+                            console.error("Error loading notes:", event);
+                            reject('Error loading notes');
+                        };
+                    } catch (error) {
+                        console.error("Transaction error:", error);
+                        reject(error);
+                    }
+                });
+            }
+            
+            // Save notes to IndexedDB
+            function saveNotesToDB() {
+                return new Promise((resolve, reject) => {
+                    if (!db) {
+                        // Fallback to localStorage
+                        localStorage.setItem('fantasyNotes', JSON.stringify(notes));
+                        updateTagOptions();
+                        return resolve();
+                    }
+                    
+                    try {
+                        const transaction = db.transaction([STORE_NAME], 'readwrite');
+                        const store = transaction.objectStore(STORE_NAME);
+                        
+                        // Clear existing notes
+                        const clearRequest = store.clear();
+                        
+                        clearRequest.onsuccess = () => {
+                            // Add all notes
+                            let completed = 0;
+                            
+                            notes.forEach(note => {
+                                const addRequest = store.add(note);
+                                
+                                addRequest.onsuccess = () => {
+                                    completed++;
+                                    if (completed === notes.length) {
+                                        updateTagOptions();
+                                        resolve();
+                                    }
+                                };
+                                
+                                addRequest.onerror = (event) => {
+                                    console.error("Error adding note:", event);
+                                    reject('Error adding note');
+                                };
+                            });
+                            
+                            // If no notes, still resolve
+                            if (notes.length === 0) {
+                                updateTagOptions();
+                                resolve();
+                            }
+                        };
+                        
+                        clearRequest.onerror = (event) => {
+                            console.error("Error clearing notes:", event);
+                            reject('Error clearing notes');
+                        };
+                        
+                        transaction.onerror = (event) => {
+                            console.error("Transaction error:", event);
+                            reject('Transaction error');
+                        };
+                    } catch (error) {
+                        console.error("Transaction creation error:", error);
+                        
+                        // Fallback to localStorage
+                        localStorage.setItem('fantasyNotes', JSON.stringify(notes));
+                        updateTagOptions();
+                        resolve();
+                    }
+                });
+            }
+            
+            // Simplified save function for the app
+            function saveNotes() {
+                saveNotesToDB().then(() => {
+                    console.log("Notes saved successfully");
+                }).catch(error => {
+                    console.error("Error saving notes:", error);
+                    alert("There was an error saving your notes. Some data may not be preserved.");
+                });
+            }
+            
+            // Style pack management
+            function loadStyleSettings() {
+                return new Promise((resolve, reject) => {
+                    if (!db) {
+                        const settings = JSON.parse(localStorage.getItem('fantasyStyleSettings')) || {};
+                        return resolve(settings);
+                    }
+                    
+                    try {
+                        const transaction = db.transaction([SETTINGS_STORE], 'readonly');
+                        const store = transaction.objectStore(SETTINGS_STORE);
+                        const request = store.get('styleSettings');
+                        
+                        request.onsuccess = () => {
+                            resolve(request.result || {});
+                        };
+                        
+                        request.onerror = (event) => {
+                            console.error("Error loading style settings:", event);
+                            reject('Error loading style settings');
+                        };
+                    } catch (error) {
+                        console.error("Transaction error:", error);
+                        const settings = JSON.parse(localStorage.getItem('fantasyStyleSettings')) || {};
+                        resolve(settings);
+                    }
+                });
+            }
+            
+            function saveStyleSettings(settings) {
+                return new Promise((resolve, reject) => {
+                    // Also save to localStorage as backup
+                    localStorage.setItem('fantasyStyleSettings', JSON.stringify(settings));
+                    
+                    if (!db) {
+                        return resolve();
+                    }
+                    
+                    try {
+                        const transaction = db.transaction([SETTINGS_STORE], 'readwrite');
+                        const store = transaction.objectStore(SETTINGS_STORE);
+                        
+                        const settingsObj = { 
+                            id: 'styleSettings',
+                            ...settings 
+                        };
+                        
+                        const request = store.put(settingsObj);
+                        
+                        request.onsuccess = () => resolve();
+                        request.onerror = (event) => {
+                            console.error("Error saving style settings:", event);
+                            reject('Error saving style settings');
+                        };
+                    } catch (error) {
+                        console.error("Transaction error:", error);
+                        resolve(); // Continue anyway since we saved to localStorage
+                    }
+                });
+            }
+            
+            // Define style packs
+            const stylePacks = [
+                {
+                    id: 'default',
+                    name: 'Default Dark',
+                    css: `:root {
+                        --primary-color: #3a506b;
+                        --secondary-color: #1c2541;
+                        --accent-color: #5bc0be;
+                        --text-color: #edf2f4;
+                        --bg-color: #0b132b;
+                        --card-color: #202e4a;
+                        --hover-color: #48639c;
+                        --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        --font-headings: var(--font-main);
+                    }`,
+                    preview: {
+                        bg: '#0b132b',
+                        text: '#edf2f4',
+                        accent: '#5bc0be'
+                    }
+                },
+                {
+                    id: 'light',
+                    name: 'Light Mode',
+                    css: `:root {
+                        --primary-color: #6d9eeb;
+                        --secondary-color: #e9ecef;
+                        --accent-color: #4361ee;
+                        --text-color: #212529;
+                        --bg-color: #f8f9fa;
+                        --card-color: #ffffff;
+                        --hover-color: #d1ddf1;
+                        --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        --font-headings: var(--font-main);
+                    }`,
+                    preview: {
+                        bg: '#f8f9fa',
+                        text: '#212529',
+                        accent: '#4361ee'
+                    }
+                },
+                {
+                    id: 'forest',
+                    name: 'Forest',
+                    css: `:root {
+                        --primary-color: #3a5a40;
+                        --secondary-color: #1b4332;
+                        --accent-color: #a3b18a;
+                        --text-color: #f8f9fa;
+                        --bg-color: #081c15;
+                        --card-color: #2d6a4f;
+                        --hover-color: #52b788;
+                        --font-main: 'Georgia', serif;
+                        --font-headings: 'Georgia', serif;
+                    }`,
+                    preview: {
+                        bg: '#081c15',
+                        text: '#f8f9fa',
+                        accent: '#a3b18a'
+                    }
+                },
+                {
+                    id: 'sepia',
+                    name: 'Sepia',
+                    css: `:root {
+                        --primary-color: #8b7e74;
+                        --secondary-color: #c7b7a3;
+                        --accent-color: #6d4c3d;
+                        --text-color: #4d3e3e;
+                        --bg-color: #f3e9dc;
+                        --card-color: #e6d5b8;
+                        --hover-color: #d7c0ae;
+                        --font-main: 'Bookman Old Style', serif;
+                        --font-headings: 'Bookman Old Style', serif;
+                    }
+                    
+                    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+                        color: var(--primary-color);
+                        border-bottom: 1px solid var(--accent-color);
+                        padding-bottom: 5px;
+                    }`,
+                    preview: {
+                        bg: '#f3e9dc',
+                        text: '#4d3e3e',
+                        accent: '#6d4c3d'
+                    }
+                },
+                {
+                    id: 'cyberpunk',
+                    name: 'Cyberpunk',
+                    css: `:root {
+                        --primary-color: #2b2b52;
+                        --secondary-color: #0c0c0c;
+                        --accent-color: #ff2975;
+                        --text-color: #f0ece2;
+                        --bg-color: #121212;
+                        --card-color: #1a1a1a;
+                        --hover-color: #341677;
+                        --font-main: 'Courier New', monospace;
+                        --font-headings: 'Impact', fantasy;
+                    }
+                    
+                    .sidebar {
+                        border-right: 2px solid var(--accent-color);
+                    }
+                    
+                    .note-card {
+                        border-left: 2px solid var(--accent-color);
+                    }
+                    
+                    .markdown-content {
+                        border: 1px solid var(--accent-color);
+                    }`,
+                    preview: {
+                        bg: '#121212',
+                        text: '#f0ece2',
+                        accent: '#ff2975'
+                    }
+                }
+            ];
+            
+            // Add custom styles from localStorage
+            function loadCustomStyles() {
+                const customStyles = JSON.parse(localStorage.getItem('fantasyCustomStyles')) || [];
+                return customStyles;
+            }
+            
+            function saveCustomStyles(customStyles) {
+                localStorage.setItem('fantasyCustomStyles', JSON.stringify(customStyles));
+            }
+            
+            // Apply style by ID
+            function applyStyle(styleId) {
+                // All available styles (built-in + custom)
+                const allStyles = [...stylePacks, ...loadCustomStyles()];
+                const style = allStyles.find(s => s.id === styleId);
+                
+                if (!style) return;
+                
+                // Update the custom styles element
+                document.getElementById('customStyles').textContent = style.css;
+                
+                // Save the setting
+                saveStyleSettings({ activeStyle: styleId });
+                
+                // Update active style in UI
+                document.querySelectorAll('.style-pack').forEach(el => {
+                    el.classList.toggle('active', el.dataset.id === styleId);
+                });
+            }
+            
+            // Render style packs
+            function renderStylePacks() {
+                stylePacksContainer.innerHTML = '';
+                
+                // Get current style
+                loadStyleSettings().then(settings => {
+                    const currentStyle = settings.activeStyle || 'default';
+                    
+                    // Add built-in style packs
+                    stylePacks.forEach(style => {
+                        const stylePack = document.createElement('div');
+                        stylePack.className = 'style-pack';
+                        stylePack.dataset.id = style.id;
+                        
+                        if (style.id === currentStyle) {
+                            stylePack.classList.add('active');
+                        }
+                        
+                        stylePack.innerHTML = `
+                            <div class="style-pack-preview" style="background-color: ${style.preview.bg}; color: ${style.preview.text}; border: 1px solid ${style.preview.accent};">
+                                Aa
+                            </div>
+                            <div>${style.name}</div>
+                        `;
+                        
+                        stylePack.addEventListener('click', () => {
+                            applyStyle(style.id);
+                        });
+                        
+                        stylePacksContainer.appendChild(stylePack);
+                    });
+                    
+                    // Add custom style packs
+                    const customStyles = loadCustomStyles();
+                    customStyles.forEach(style => {
+                        const stylePack = document.createElement('div');
+                        stylePack.className = 'style-pack';
+                        stylePack.dataset.id = style.id;
+                        
+                        if (style.id === currentStyle) {
+                            stylePack.classList.add('active');
+                        }
+                        
+                        stylePack.innerHTML = `
+                            <div class="style-pack-preview" style="background-color: ${style.preview?.bg || '#333'}; color: ${style.preview?.text || '#fff'};">
+                                Aa
+                            </div>
+                            <div>${style.name}</div>
+                            <button class="remove-style" data-id="${style.id}" style="margin-top: 5px; background-color: #e63946; color: white; border: none; padding: 2px 5px; border-radius: 3px; font-size: 0.7rem;">Remove</button>
+                        `;
+                        
+                        stylePack.addEventListener('click', (e) => {
+                            if (!e.target.classList.contains('remove-style')) {
+                                applyStyle(style.id);
+                            }
+                        });
+                        
+                        stylePacksContainer.appendChild(stylePack);
+                    });
+                    
+                    // Add event listeners to remove buttons
+                    document.querySelectorAll('.remove-style').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const styleId = btn.dataset.id;
+                            const customStyles = loadCustomStyles();
+                            const updatedStyles = customStyles.filter(s => s.id !== styleId);
+                            saveCustomStyles(updatedStyles);
+                            
+                            // If the removed style was active, switch to default
+                            loadStyleSettings().then(settings => {
+                                if (settings.activeStyle === styleId) {
+                                    applyStyle('default');
+                                }
+                                renderStylePacks();
+                            });
+                        });
+                    });
+                });
+            }
+            
+            // Add custom style from URL
+            function addCustomStyleFromURL(url) {
+                fetch(url)
+                    .then(response => response.text())
+                    .then(css => {
+                        addCustomStyleFromText(css, `Style from ${url}`);
+                    })
+                    .catch(error => {
+                        console.error("Error loading style from URL:", error);
+                        alert("Unable to load style from that URL. Please check the URL and try again.");
+                    });
+            }
+            
+            // Add custom style from file
+            function addCustomStyleFromFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const css = e.target.result;
+                    addCustomStyleFromText(css, file.name.replace('.css', ''));
+                };
+                reader.onerror = () => {
+                    alert("Error reading file. Please try again with a different file.");
+                };
+                reader.readAsText(file);
+            }
+            
+            // Add custom style from text
+            function addCustomStyleFromText(css, name) {
+                const customStyles = loadCustomStyles();
+                const id = 'custom-' + Date.now();
+                
+                // Try to extract preview colors
+                let preview = {
+                    bg: '#333',
+                    text: '#fff',
+                    accent: '#0af'
+                };
+                
+                try {
+                    // Extract colors using regex
+                    const bgMatch = css.match(/--bg-color:\s*([^;]+);/);
+                    const textMatch = css.match(/--text-color:\s*([^;]+);/);
+                    const accentMatch = css.match(/--accent-color:\s*([^;]+);/);
+                    
+                    if (bgMatch) preview.bg = bgMatch[1].trim();
+                    if (textMatch) preview.text = textMatch[1].trim();
+                    if (accentMatch) preview.accent = accentMatch[1].trim();
+                } catch (e) {
+                    console.error("Error extracting colors:", e);
+                }
+                
+                const style = {
+                    id,
+                    name: name || `Custom Style ${customStyles.length + 1}`,
+                    css,
+                    preview
+                };
+                
+                customStyles.push(style);
+                saveCustomStyles(customStyles);
+                
+                // Apply the new style
+                applyStyle(id);
+                
+                // Update the UI
+                renderStylePacks();
+                
+                return style;
+            }
+            
+            // Event Listeners for style packs
+            styleSettingsBtn.addEventListener('click', () => {
+                renderStylePacks();
+                styleModal.style.display = 'flex';
+            });
+            
+            closeStyleModal.addEventListener('click', () => {
+                styleModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            styleModal.addEventListener('click', (e) => {
+                if (e.target === styleModal) {
+                    styleModal.style.display = 'none';
+                }
+            });
+            
+            // Add style from URL
+            addCustomStyleBtn.addEventListener('click', () => {
+                const url = customStyleURL.value.trim();
+                if (url) {
+                    addCustomStyleFromURL(url);
+                    customStyleURL.value = '';
+                }
+            });
+            
+            // Add style from file
+            customStyleFile.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    addCustomStyleFromFile(e.target.files[0]);
+                    e.target.value = '';
+                }
+            });
+            
+            // Add style from text input
+            saveCustomStyleBtn.addEventListener('click', () => {
+                const css = customStyleText.value.trim();
+                if (css) {
+                    addCustomStyleFromText(css, 'Custom Style');
+                    customStyleText.value = '';
+                }
+            });
+            
+            // Event Listeners
+            createNoteBtn.addEventListener('click', createNewNote);
+            tagFilter.addEventListener('change', filterNotes);
+            searchInput.addEventListener('input', filterNotes);
+            
+            // Initialize app
+            initDB().then(() => {
+                console.log("App initialized successfully");
+            }).catch(error => {
+                console.error("Error initializing app:", error);
+            });
+            
+            // Functions
+            function createNewNote() {
+                const newNote = {
+                    id: Date.now().toString(),
+                    title: 'New Note',
+                    content: '# New Note\n\nStart writing your content here...',
+                    tags: [],
+                    relations: [],
+                    created: new Date().toISOString(),
+                    updated: new Date().toISOString()
+                };
+                
+                notes.push(newNote);
+                saveNotes();
+                renderNotesList();
+                renderNoteEditor(newNote.id);
+            }
+            
+            function renderNotesList() {
+                notesContainer.innerHTML = '';
+                
+                const filterTag = tagFilter.value;
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                const filteredNotes = notes.filter(note => {
+                    const matchesTag = !filterTag || note.tags.includes(filterTag);
+                    const matchesSearch = !searchTerm || 
+                        note.title.toLowerCase().includes(searchTerm) || 
+                        note.content.toLowerCase().includes(searchTerm);
+                    
+                    return matchesTag && matchesSearch;
+                });
+                
+                if (filteredNotes.length === 0) {
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = `
+                        <div class="empty-icon">🔍</div>
+                        <h3>No notes found</h3>
+                        <p>Try changing your filters or create a new note</p>
+                    `;
+                    notesContainer.appendChild(emptyState);
+                    return;
+                }
+                
+                filteredNotes.sort((a, b) => new Date(b.updated) - new Date(a.updated))
+                    .forEach(note => {
+                    const noteCard = document.createElement('div');
+                    noteCard.className = 'note-card';
+                    if (note.id === currentNoteId) {
+                        noteCard.style.borderLeft = '3px solid var(--accent-color)';
+                    }
+                    
+                    let tagsHtml = '';
+                    if (note.tags.length > 0) {
+                        tagsHtml = `
+                            <div class="note-tags">
+                                ${note.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    noteCard.innerHTML = `
+                        <div class="note-title">${note.title}</div>
+                        <div class="note-date">${formatDate(note.updated)}</div>
+                        ${tagsHtml}
+                    `;
+                    
+                    noteCard.addEventListener('click', () => {
+                        renderNoteViewer(note.id);
+                    });
+                    
+                    notesContainer.appendChild(noteCard);
+                });
+            }
+            
+            function updateTagOptions() {
+                const allTags = new Set();
+                
+                notes.forEach(note => {
+                    note.tags.forEach(tag => {
+                        allTags.add(tag);
+                    });
+                });
+                
+                const currentValue = tagFilter.value;
+                tagFilter.innerHTML = '<option value="">All Tags</option>';
+                
+                Array.from(allTags).sort().forEach(tag => {
+                    const option = document.createElement('option');
+                    option.value = tag;
+                    option.textContent = tag;
+                    
+                    if (tag === currentValue) {
+                        option.selected = true;
+                    }
+                    
+                    tagFilter.appendChild(option);
+                });
+            }
+            
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            }
+            
+            function renderNoteEditor(noteId) {
+                isEditing = true;
+                currentNoteId = noteId;
+                renderNotesList();
+                
+                const note = notes.find(n => n.id === noteId);
+                
+                if (!note) {
+                    noNoteSelected.style.display = 'flex';
+                    return;
+                }
+                
+                noNoteSelected.style.display = 'none';
+                
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <div class="content-title">Editing: ${note.title}</div>
+                        <div class="action-btns">
+                            <button class="save-btn" id="saveNoteBtn">Save</button>
+                            <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="content-body">
+                        <div class="note-editor">
+                            <input type="text" class="note-input" id="noteTitleInput" placeholder="Note Title" value="${note.title}">
+                            
+                            <div class="tags-input-container" id="tagsContainer">
+                                ${note.tags.map(tag => `
+                                    <div class="selected-tag">
+                                        ${tag}
+                                        <span class="remove-tag" data-tag="${tag}">×</span>
+                                    </div>
+                                `).join('')}
+                                <input type="text" class="tags-input" id="tagsInput" placeholder="Add tags...">
+                            </div>
+                            
+                            <div class="relations-container">
+                                <h3>Related Notes</h3>
+                                <div id="relationsContainer">
+                                    ${note.relations.map((relation, index) => `
+                                        <div class="relation-item">
+                                            <select class="relation-select" data-index="${index}">
+                                                <option value="">Select a note...</option>
+                                                ${notes.filter(n => n.id !== note.id)
+                                                    .map(n => `<option value="${n.id}" ${relation === n.id ? 'selected' : ''}>${n.title}</option>`).join('')}
+                                            </select>
+                                            <button class="remove-relation" data-index="${index}">×</button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <button class="add-relation-btn" id="addRelationBtn">Add Relation</button>
+                            </div>
+                            
+                            <textarea class="note-textarea" id="noteContentInput" placeholder="Note content in Markdown format...">${note.content}</textarea>
+                        </div>
+                    </div>
+                `;
+                
+                // Set up event listeners for the editor
+                document.getElementById('saveNoteBtn').addEventListener('click', () => saveNote(noteId));
+                document.getElementById('cancelEditBtn').addEventListener('click', () => renderNoteViewer(noteId));
+                
+                // Tags input
+                const tagsInput = document.getElementById('tagsInput');
+                const tagsContainer = document.getElementById('tagsContainer');
+                
+                tagsInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        const tag = tagsInput.value.trim();
+                        
+                        if (tag && !note.tags.includes(tag)) {
+                            note.tags.push(tag);
+                            
+                            const tagElement = document.createElement('div');
+                            tagElement.className = 'selected-tag';
+                            tagElement.innerHTML = `
+                                ${tag}
+                                <span class="remove-tag" data-tag="${tag}">×</span>
+                            `;
+                            
+                            tagsContainer.insertBefore(tagElement, tagsInput);
+                            tagsInput.value = '';
+                            
+                            // Add event listener to the remove button
+                            tagElement.querySelector('.remove-tag').addEventListener('click', () => {
+                                note.tags = note.tags.filter(t => t !== tag);
+                                tagElement.remove();
+                            });
+                        }
+                        
+                        tagsInput.value = '';
+                    }
+                });
+                
+                // Add event listeners to existing remove tag buttons
+                document.querySelectorAll('.remove-tag').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tag = btn.getAttribute('data-tag');
+                        note.tags = note.tags.filter(t => t !== tag);
+                        btn.parentElement.remove();
+                    });
+                });
+                
+                // Relations
+                document.getElementById('addRelationBtn').addEventListener('click', () => {
+                    const relationsContainer = document.getElementById('relationsContainer');
+                    const index = note.relations.length;
+                    note.relations.push('');
+                    
+                    const relationItem = document.createElement('div');
+                    relationItem.className = 'relation-item';
+                    relationItem.innerHTML = `
+                        <select class="relation-select" data-index="${index}">
+                            <option value="">Select a note...</option>
+                            ${notes.filter(n => n.id !== note.id)
+                                .map(n => `<option value="${n.id}">${n.title}</option>`).join('')}
+                        </select>
+                        <button class="remove-relation" data-index="${index}">×</button>
+                    `;
+                    
+                    relationsContainer.appendChild(relationItem);
+                    
+                    // Add event listeners
+                    relationItem.querySelector('.relation-select').addEventListener('change', (e) => {
+                        note.relations[index] = e.target.value;
+                    });
+                    
+                    relationItem.querySelector('.remove-relation').addEventListener('click', () => {
+                        note.relations.splice(index, 1);
+                        relationItem.remove();
+                        
+                        // Update data indices for remaining relation items
+                        document.querySelectorAll('.relation-select, .remove-relation').forEach(el => {
+                            const elIndex = parseInt(el.getAttribute('data-index'));
+                            if (elIndex > index) {
+                                el.setAttribute('data-index', (elIndex - 1).toString());
+                            }
+                        });
+                    });
+                });
+                
+                // Add event listeners to existing relation selects and remove buttons
+                document.querySelectorAll('.relation-select').forEach(select => {
+                    select.addEventListener('change', (e) => {
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        note.relations[index] = e.target.value;
+                    });
+                });
+                
+                document.querySelectorAll('.remove-relation').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        note.relations.splice(index, 1);
+                        e.target.parentElement.remove();
+                        
+                        // Update data indices for remaining relation items
+                        document.querySelectorAll('.relation-select, .remove-relation').forEach(el => {
+                            const elIndex = parseInt(el.getAttribute('data-index'));
+                            if (elIndex > index) {
+                                el.setAttribute('data-index', (elIndex - 1).toString());
+                            }
+                        });
+                    });
+                });
+            }
+            
+            function saveNote(noteId) {
+                const note = notes.find(n => n.id === noteId);
+                
+                if (!note) return;
+                
+                note.title = document.getElementById('noteTitleInput').value.trim() || 'Untitled';
+                note.content = document.getElementById('noteContentInput').value;
+                note.updated = new Date().toISOString();
+                
+                saveNotes();
+                renderNoteViewer(noteId);
+            }
+            
+            function renderNoteViewer(noteId) {
+                isEditing = false;
+                currentNoteId = noteId;
+                renderNotesList();
+                
+                const note = notes.find(n => n.id === noteId);
+                
+                if (!note) {
+                    noNoteSelected.style.display = 'flex';
+                    return;
+                }
+                
+                noNoteSelected.style.display = 'none';
+                
+                // Prepare related notes
+                let relatedNotesHtml = '';
+                if (note.relations.length > 0) {
+                    const relatedNotes = notes.filter(n => note.relations.includes(n.id));
+                    
+                    if (relatedNotes.length > 0) {
+                        relatedNotesHtml = `
+                            <div class="related-notes">
+                                <div class="related-title">Related Notes</div>
+                                <div class="related-list">
+                                    ${relatedNotes.map(rn => `
+                                        <div class="related-item" data-id="${rn.id}">
+                                            ${rn.title}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Render the note viewer
+                mainContent.innerHTML = `
+                    <div class="content-header">
+                        <div class="content-title">${note.title}</div>
+                        <div class="action-btns">
+                            <button class="edit-btn" id="editNoteBtn">Edit</button>
+                            <button class="delete-btn" id="deleteNoteBtn">Delete</button>
+                        </div>
+                    </div>
+                    <div class="content-body">
+                        ${note.tags.length > 0 ? `
+                            <div class="note-tags" style="margin-bottom: 15px;">
+                                ${note.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="markdown-content">
+                            ${marked.parse(note.content)}
+                        </div>
+                        
+                        ${relatedNotesHtml}
+                    </div>
+                `;
+                
+                // Add event listeners
+                document.getElementById('editNoteBtn').addEventListener('click', () => renderNoteEditor(noteId));
+                document.getElementById('deleteNoteBtn').addEventListener('click', () => confirmDeleteNote(noteId));
+                
+                // Add event listeners to related note items
+                document.querySelectorAll('.related-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const relatedId = item.getAttribute('data-id');
+                        renderNoteViewer(relatedId);
+                    });
+                });
+            }
+            
+            function confirmDeleteNote(noteId) {
+                if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
+                    deleteNote(noteId);
+                }
+            }
+            
+            function deleteNote(noteId) {
+                notes = notes.filter(n => n.id !== noteId);
+                
+                // Also remove relations to this note from other notes
+                notes.forEach(note => {
+                    note.relations = note.relations.filter(r => r !== noteId);
+                });
+                
+                saveNotes();
+                currentNoteId = null;
+                noNoteSelected.style.display = 'flex';
+                renderNotesList();
+            }
+            
+            function filterNotes() {
+                renderNotesList();
+            }
+        });
+    </script>
+</body>
+</html>
