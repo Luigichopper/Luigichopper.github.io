@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Christian Schedule & Workout Planner</title>
+    <style>
+        :root {
+            --primary: #3a5a78;
+            --secondary: #718eaa;
+            --accent: #f0c674;
+            --light: #f5f5f5;
+            --dark: #333;
+            --success: #75b798;
+            --prayer: #d4a373;
+            --workout: #588157;
+            --work: #9c6644;
+            --school: #6c757d;
+            --free: #7678ed;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+        
+        header p {
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .day-selector {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .day-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 100px;
+            margin: 0 5px;
+        }
+        
+        .day-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .day-btn.active {
+            background-color: var(--accent);
+            color: var(--dark);
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .schedule-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .schedule-header h2 {
+            margin: 0;
+            color: var(--primary);
+        }
+        
+        .schedule-header .date {
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+        
+        .schedule-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .schedule-item:hover {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .time {
+            font-weight: bold;
+            min-width: 100px;
+        }
+        
+        .task {
+            flex-grow: 1;
+            margin: 0 15px;
+        }
+        
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .task-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .completed-checkbox {
+            min-width: 25px;
+            height: 25px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .workout-details {
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--workout);
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .workout-details h4 {
+            margin: 10px 0;
+            color: var(--workout);
+        }
+        
+        .workout-details ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        
+        .workout-details li {
+            margin-bottom: 5px;
+        }
+        
+        .prayer-item {
+            background-color: rgba(212, 163, 115, 0.1);
+            border-left: 4px solid var(--prayer);
+        }
+        
+        .workout-item {
+            background-color: rgba(88, 129, 87, 0.1);
+            border-left: 4px solid var(--workout);
+        }
+        
+        .work-item {
+            background-color: rgba(156, 102, 68, 0.1);
+            border-left: 4px solid var(--work);
+        }
+        
+        .school-item {
+            background-color: rgba(108, 117, 125, 0.1);
+            border-left: 4px solid var(--school);
+        }
+        
+        .free-item {
+            background-color: rgba(118, 120, 237, 0.1);
+            border-left: 4px solid var(--free);
+        }
+        
+        .daily-progress {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .collapsed {
+            display: none;
+        }
+        
+        .collapse-btn {
+            background: none;
+            border: none;
+            color: var(--secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 5px;
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .collapse-btn:hover {
+            color: var(--primary);
+        }
+        
+        .task-category {
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+        
+        .category-prayer {
+            background-color: var(--prayer);
+            color: white;
+        }
+        
+        .category-workout {
+            background-color: var(--workout);
+            color: white;
+        }
+        
+        .category-work {
+            background-color: var(--work);
+            color: white;
+        }
+        
+        .category-school {
+            background-color: var(--school);
+            color: white;
+        }
+        
+        .category-free {
+            background-color: var(--free);
+            color: white;
+        }
+        
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .day-selector {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .day-btn {
+                margin-bottom: 10px;
+            }
+            
+            .schedule-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .time {
+                margin-bottom: 10px;
+            }
+            
+            .completed-checkbox {
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daily Christian Schedule & Workout Planner</h1>
+            <p>"This is the day that the Lord has made; let us rejoice and be glad in it." - Psalm 118:24</p>
+        </header>
+        
+        <div class="day-selector">
+            <button class="day-btn" data-day="sunday">Sunday</button>
+            <button class="day-btn" data-day="monday">Monday</button>
+            <button class="day-btn" data-day="tuesday">Tuesday</button>
+            <button class="day-btn" data-day="wednesday">Wednesday</button>
+            <button class="day-btn" data-day="thursday">Thursday</button>
+            <button class="day-btn" data-day="friday">Friday</button>
+            <button class="day-btn" data-day="saturday">Saturday</button>
+        </div>
+        
+        <div class="daily-progress">
+            <h3>Daily Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p id="progressText">0% Complete</p>
+        </div>
+        
+        <!-- Sunday Schedule -->
+        <div class="schedule-container" id="sunday-schedule">
+            <div class="schedule-header">
+                <h2>Sunday Schedule</h2>
+                <span class="date" id="sunday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Sunday reading: Psalms for worship and reflection.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Light Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Sunday recovery focus: Light stretching and low-intensity cardio.</div>
+                    <div class="workout-details">
+                        <h4>Sunday Recovery Workout:</h4>
+                        <ul>
+                            <li>5-10 minutes light walking on treadmill</li>
+                            <li>Full body stretching routine (10-15 minutes)</li>
+                            <li>Light yoga or mobility exercises</li>
+                        </ul>
+                        <p>Focus on recovery and preparing your body for the week ahead.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">9:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Shower & Breakfast</div>
+                    <div class="task-desc">Refresh and fuel your body for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">9:40 - 12:00</div>
+                <div class="task">
+                    <div class="task-title">Morning Church Service <span class="task-category category-prayer">Worship</span></div>
+                    <div class="task-desc">Attend morning church service.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">12:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Lunch</div>
+                    <div class="task-desc">Enjoy a nutritious meal after church.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">13:30 - 17:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Rest, family time, hobbies, or preparation for the week ahead.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">17:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Light Snack</div>
+                    <div class="task-desc">Quick snack before evening service.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">17:30 - 20:00</div>
+                <div class="task">
+                    <div class="task-title">Evening Church Service <span class="task-category category-prayer">Worship</span></div>
+                    <div class="task-desc">Attend evening church service.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">20:15 PM</div>
+                <div class="task">
+                    <div class="task-title">Dinner</div>
+                    <div class="task-desc">Enjoy a balanced evening meal after church.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day, practice gratitude, and set intentions for tomorrow.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="sunday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Monday Schedule -->
+        <div class="schedule-container" id="monday-schedule">
+            <div class="schedule-header">
+                <h2>Monday Schedule</h2>
+                <span class="date" id="monday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Monday reading: Start of the week - Proverbs for wisdom.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Upper Body Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Monday focus: Chest, shoulders, and triceps.</div>
+                    <div class="workout-details">
+                        <h4>Monday Upper Body Workout:</h4>
+                        <ul>
+                            <li>5-minute warm-up on treadmill</li>
+                            <li>Bench press: 3 sets of 8-12 reps</li>
+                            <li>Pull-downs: 3 sets of 10-12 reps</li>
+                            <li>Shoulder press: 3 sets of 8-10 reps</li>
+                            <li>Tricep extensions: 3 sets of 12-15 reps</li>
+                            <li>Complete with arm workout from your app</li>
+                        </ul>
+                        <p>Rest 60-90 seconds between sets. Adjust weights as needed for your fitness level.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">9:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Shower & Breakfast</div>
+                    <div class="task-desc">Refresh and fuel your body for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">9:30 - 12:00</div>
+                <div class="task">
+                    <div class="task-title">School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Focus on core subjects: Math, Science, English, etc.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item work-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">12:00 - 15:00</div>
+                <div class="task">
+                    <div class="task-title">Work <span class="task-category category-work">Work</span></div>
+                    <div class="task-desc">Monday work shift.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">15:00 - 17:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time / Additional Studies <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Time for hobbies, additional learning, or rest.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">17:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Dinner</div>
+                    <div class="task-desc">Enjoy a balanced evening meal.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">18:00 - 21:00</div>
+                <div class="task">
+                    <div class="task-title">Evening Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Relax, read, or spend time with family.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day, practice gratitude, and set intentions for tomorrow.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="monday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tuesday Schedule -->
+        <div class="schedule-container" id="tuesday-schedule">
+            <div class="schedule-header">
+                <h2>Tuesday Schedule</h2>
+                <span class="date" id="tuesday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Tuesday reading: Gospels (Matthew, Mark, Luke, or John).</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Lower Body Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Tuesday focus: Legs and core strength.</div>
+                    <div class="workout-details">
+                        <h4>Tuesday Lower Body Workout:</h4>
+                        <ul>
+                            <li>5-minute warm-up on treadmill</li>
+                            <li>Leg extensions: 3 sets of 12-15 reps</li>
+                            <li>Leg curls: 3 sets of 12-15 reps</li>
+                            <li>Complete ab workout from your app</li>
+                            <li>Bodyweight squats: 3 sets of 15-20 reps</li>
+                            <li>Calf raises: 3 sets of 15-20 reps</li>
+                        </ul>
+                        <p>Rest 60-90 seconds between sets. Focus on proper form and controlled movements.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">9:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Shower & Breakfast</div>
+                    <div class="task-desc">Refresh and fuel your body for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">9:30 - 12:30</div>
+                <div class="task">
+                    <div class="task-title">School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Focus on core subjects: Math, Science, English, etc.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">12:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Lunch</div>
+                    <div class="task-desc">Enjoy a nutritious meal.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">13:30 - 15:30</div>
+                <div class="task">
+                    <div class="task-title">Additional School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Complete assignments and additional studying.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">15:30 - 17:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Time for hobbies, reading, or rest.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">17:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Dinner</div>
+                    <div class="task-desc">Enjoy a balanced evening meal.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">18:00 - 21:00</div>
+                <div class="task">
+                    <div class="task-title">Evening Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Relax, read, or spend time with family.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day, practice gratitude, and set intentions for tomorrow.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="tuesday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wednesday Schedule -->
+        <div class="schedule-container" id="wednesday-schedule">
+            <div class="schedule-header">
+                <h2>Wednesday Schedule</h2>
+                <span class="date" id="wednesday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Wednesday reading: Epistles of Paul (Romans, Corinthians, etc.).</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Cardio Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Wednesday focus: Cardiovascular fitness and endurance.</div>
+                    <div class="workout-details">
+                        <h4>Wednesday Cardio Workout:</h4>
+                        <ul>
+                            <li>5-minute warm-up with light stretching</li>
+                            <li>Treadmill interval training: 20-30 minutes</li>
+                            <ul>
+                                <li>2 minutes moderate pace</li>
+                                <li>1 minute faster pace</li>
+                                <li>Repeat 7-10 times</li>
+                            </ul>
+                            <li>Core workout from your app</li>
+                            <li>5-minute cool down walk</li>
+                        </ul>
+                        <p>Focus on maintaining good posture and breathing techniques during cardio.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">9:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Shower & Breakfast</div>
+                    <div class="task-desc">Refresh and fuel your body for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">9:30 - 12:30</div>
+                <div class="task">
+                    <div class="task-title">School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Focus on core subjects: Math, Science, English, etc.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">12:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Lunch</div>
+                    <div class="task-desc">Enjoy a nutritious meal.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">13:30 - 16:30</div>
+                <div class="task">
+                    <div class="task-title">Additional School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Complete assignments and additional studying.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">16:30 - 17:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Short break before work.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item work-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">17:00 - 21:00</div>
+                <div class="task">
+                    <div class="task-title">Work <span class="task-category category-work">Work</span></div>
+                    <div class="task-desc">Wednesday work shift.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day, practice gratitude, and set intentions for tomorrow.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="wednesday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thursday Schedule -->
+        <div class="schedule-container" id="thursday-schedule">
+            <div class="schedule-header">
+                <h2>Thursday Schedule</h2>
+                <span class="date" id="thursday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Thursday reading: Old Testament stories and lessons.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Upper Body Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Thursday focus: Back, biceps, and shoulders.</div>
+                    <div class="workout-details">
+                        <h4>Thursday Upper Body Workout:</h4>
+                        <ul>
+                            <li>5-minute warm-up on treadmill</li>
+                            <li>Pull-downs: 3 sets of 10-12 reps</li>
+                            <li>Bicep curls: 3 sets of 10-12 reps</li>
+                            <li>Shoulder press: 3 sets of 8-10 reps</li>
+                            <li>Complete arm workout from your app</li>
+                            <li>Upper back rows: 3 sets of 10-12 reps</li>
+                        </ul>
+                        <p>Rest 60-90 seconds between sets. Focus on controlled movements and proper breathing.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">9:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Shower & Breakfast</div>
+                    <div class="task-desc">Refresh and fuel your body for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">9:30 - 12:30</div>
+                <div class="task">
+                    <div class="task-title">School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Focus on core subjects: Math, Science, English, etc.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">12:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Lunch</div>
+                    <div class="task-desc">Enjoy a nutritious meal.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">13:30 - 16:30</div>
+                <div class="task">
+                    <div class="task-title">Additional School Work <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Complete assignments and additional studying.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">16:30 - 17:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Short break before work.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item work-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">17:00 - 21:00</div>
+                <div class="task">
+                    <div class="task-title">Work <span class="task-category category-work">Work</span></div>
+                    <div class="task-desc">Thursday work shift.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day, practice gratitude, and set intentions for tomorrow.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="thursday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Friday Schedule -->
+        <div class="schedule-container" id="friday-schedule">
+            <div class="schedule-header">
+                <h2>Friday Schedule</h2>
+                <span class="date" id="friday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Friday reading: Psalms or Proverbs for reflection on the week.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Quick Breakfast</div>
+                    <div class="task-desc">Light meal before homeschool group.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item school-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">9:00 - 13:00</div>
+                <div class="task">
+                    <div class="task-title">Homeschool Group <span class="task-category category-school">School</span></div>
+                    <div class="task-desc">Friday homeschool group activities and learning.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">13:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Lunch</div>
+                    <div class="task-desc">Enjoy a nutritious meal after homeschool group.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">14:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Lower Body & Core Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Friday focus: Legs, glutes, and abdominals.</div>
+                    <div class="workout-details">
+                        <h4>Friday Lower Body & Core Workout:</h4>
+                        <ul>
+                            <li>5-minute warm-up on treadmill</li>
+                            <li>Leg extensions: 3 sets of 12-15 reps</li>
+                            <li>Leg curls: 3 sets of 12-15 reps</li>
+                            <li>Glute bridges: 3 sets of 15 reps</li>
+                            <li>Complete ab workout from your app</li>
+                            <li>Calf raises: 3 sets of a 15-20 reps</li>
+                        </ul>
+                        <p>Rest 60-90 seconds between sets. Focus on controlled movements and proper form.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">15:30 PM</div>
+                <div class="task">
+                    <div class="task-title">Shower</div>
+                    <div class="task-desc">Refresh after workout.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">16:00 - 17:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Short break before work.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item work-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">17:00 - 21:00</div>
+                <div class="task">
+                    <div class="task-title">Work <span class="task-category category-work">Work</span></div>
+                    <div class="task-desc">Friday work shift.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day and week, practice gratitude, and set intentions for the weekend.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="friday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Saturday Schedule -->
+        <div class="schedule-container" id="saturday-schedule">
+            <div class="schedule-header">
+                <h2>Saturday Schedule</h2>
+                <span class="date" id="saturday-date"></span>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">7:00 AM</div>
+                <div class="task">
+                    <div class="task-title">Wake Up & Morning Prayer <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Start your day with gratitude and set your intentions for the weekend.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">7:30 AM</div>
+                <div class="task">
+                    <div class="task-title">Bible Study <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Suggested Saturday reading: Reflect on weekly devotional themes or prepare for Sunday worship.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item workout-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">8:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Full Body Workout <span class="task-category category-workout">Exercise</span></div>
+                    <div class="task-desc">Saturday focus: Complete full-body circuit training.</div>
+                    <div class="workout-details">
+                        <h4>Saturday Full Body Workout:</h4>
+                        <ul>
+                            <li>5-minute warm-up on treadmill</li>
+                            <li>Circuit (repeat 3 times):</li>
+                            <ul>
+                                <li>Bench press: 12 reps</li>
+                                <li>Pull-downs: 12 reps</li>
+                                <li>Leg extensions: 15 reps</li>
+                                <li>Bicep curls: 12 reps</li>
+                                <li>30-second plank</li>
+                                <li>1-minute rest between circuits</li>
+                            </ul>
+                            <li>15-minute moderate pace on treadmill</li>
+                            <li>Complete with stretching routine</li>
+                        </ul>
+                        <p>This workout hits all major muscle groups. Adjust weights based on your fitness level.</p>
+                    </div>
+                    <button class="collapse-btn">Show/Hide Workout Details</button>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">9:15 AM</div>
+                <div class="task">
+                    <div class="task-title">Shower & Breakfast</div>
+                    <div class="task-desc">Refresh and fuel your body for the day.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">10:00 - 12:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time / Personal Projects <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Time for hobbies, reading, or personal development.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">12:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Lunch</div>
+                    <div class="task-desc">Enjoy a nutritious meal.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">13:00 - 16:30</div>
+                <div class="task">
+                    <div class="task-title">Family Time / Chores <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Help with household tasks and spend time with family.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item free-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">15:30 - 16:00</div>
+                <div class="task">
+                    <div class="task-title">Free Time <span class="task-category category-free">Free</span></div>
+                    <div class="task-desc">Short break before work.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item work-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">16:00 - 21:00</div>
+                <div class="task">
+                    <div class="task-title">Work <span class="task-category category-work">Work</span></div>
+                    <div class="task-desc">Saturday work shift.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item prayer-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">21:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Evening Prayer & Reflection <span class="task-category category-prayer">Prayer</span></div>
+                    <div class="task-desc">Reflect on your day, practice gratitude, and prepare your heart for Sunday worship.</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <input type="checkbox" class="completed-checkbox" data-day="saturday">
+                <div class="time">22:00 PM</div>
+                <div class="task">
+                    <div class="task-title">Bedtime</div>
+                    <div class="task-desc">Aim for 8-9 hours of quality sleep.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize date variables
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const today = new Date();
+        const currentDay = days[today.getDay()];
+        
+        // Set up dates for each day
+        days.forEach((day, index) => {
+            const date = new Date();
+            const diff = index - date.getDay();
+            date.setDate(date.getDate() + diff);
+            document.getElementById(`${day}-date`).textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+        
+        // Show only current day initially
+        days.forEach(day => {
+            const scheduleEl = document.getElementById(`${day}-schedule`);
+            if (day === currentDay) {
+                scheduleEl.style.display = 'block';
+                document.querySelector(`[data-day="${day}"]`).classList.add('active');
+            } else {
+                scheduleEl.style.display = 'none';
+            }
+        });
+        
+        // Day selector buttons
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedDay = btn.getAttribute('data-day');
+                
+                // Update active button
+                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show selected day's schedule
+                days.forEach(day => {
+                    const scheduleEl = document.getElementById(`${day}-schedule`);
+                    if (day === selectedDay) {
+                        scheduleEl.style.display = 'block';
+                    } else {
+                        scheduleEl.style.display = 'none';
+                    }
+                });
+                
+                updateProgress();
+            });
+        });
+        
+        // Show/hide workout details
+        document.querySelectorAll('.collapse-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const details = btn.previousElementSibling;
+                details.classList.toggle('collapsed');
+                
+                if (details.classList.contains('collapsed')) {
+                    details.style.display = 'none';
+                    btn.textContent = 'Show Workout Details';
+                } else {
+                    details.style.display = 'block';
+                    btn.textContent = 'Hide Workout Details';
+                }
+            });
+        });
+        
+        // Handle task completion
+        document.querySelectorAll('.completed-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const taskElement = checkbox.nextElementSibling.nextElementSibling;
+                const taskTitle = taskElement.querySelector('.task-title');
+                
+                if (checkbox.checked) {
+                    taskTitle.classList.add('completed');
+                } else {
+                    taskTitle.classList.remove('completed');
+                }
+                
+                updateProgress();
+                
+                // Save to localStorage
+                saveCompletionState();
+            });
+        });
+        
+        // Update progress bar
+        function updateProgress() {
+            const activeDay = document.querySelector('.day-btn.active').getAttribute('data-day');
+            const totalTasks = document.querySelectorAll(`input[data-day="${activeDay}"]`).length;
+            const completedTasks = document.querySelectorAll(`input[data-day="${activeDay}"]:checked`).length;
+            
+            const progressPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+            
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            document.getElementById('progressText').textContent = `${Math.round(progressPercent)}% Complete (${completedTasks}/${totalTasks} tasks)`;
+        }
+        
+        // Save completion state to localStorage
+        function saveCompletionState() {
+            const state = {};
+            
+            days.forEach(day => {
+                state[day] = [];
+                document.querySelectorAll(`input[data-day="${day}"]`).forEach((checkbox, index) => {
+                    state[day][index] = checkbox.checked;
+                });
+            });
+            
+            localStorage.setItem('schedulerState', JSON.stringify(state));
+        }
+        
+        // Load completion state from localStorage
+        function loadCompletionState() {
+            const state = JSON.parse(localStorage.getItem('schedulerState'));
+            
+            if (state) {
+                days.forEach(day => {
+                    if (state[day]) {
+                        document.querySelectorAll(`input[data-day="${day}"]`).forEach((checkbox, index) => {
+                            if (state[day][index]) {
+                                checkbox.checked = true;
+                                const taskElement = checkbox.nextElementSibling.nextElementSibling;
+                                const taskTitle = taskElement.querySelector('.task-title');
+                                taskTitle.classList.add('completed');
+                            }
+                        });
+                    }
+                });
+                
+                updateProgress();
+            }
+        }
+        
+        // Reset today's tasks at midnight
+        function scheduleReset() {
+            const now = new Date();
+            const night = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() + 1, // tomorrow
+                0, 0, 0 // midnight
+            );
+            const msToMidnight = night.getTime() - now.getTime();
+            
+            setTimeout(() => {
+                resetTodayTasks();
+                scheduleReset(); // Schedule next reset
+            }, msToMidnight);
+        }
+        
+        function resetTodayTasks() {
+            const state = JSON.parse(localStorage.getItem('schedulerState')) || {};
+            const today = days[new Date().getDay()];
+            
+            // Reset just today's tasks
+            if (state[today]) {
+                state[today] = state[today].map(() => false);
+                localStorage.setItem('schedulerState', JSON.stringify(state));
+                
+                // If the current view is today, update the UI
+                if (document.querySelector(`.day-btn.active`).getAttribute('data-day') === today) {
+                    document.querySelectorAll(`input[data-day="${today}"]`).forEach((checkbox) => {
+                        checkbox.checked = false;
+                        const taskElement = checkbox.nextElementSibling.nextElementSibling;
+                        const taskTitle = taskElement.querySelector('.task-title');
+                        taskTitle.classList.remove('completed');
+                    });
+                    
+                    updateProgress();
+                }
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial workout details to collapsed
+            document.querySelectorAll('.workout-details').forEach(detail => {
+                detail.classList.add('collapsed');
+                detail.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.collapse-btn').forEach(btn => {
+                btn.textContent = 'Show Workout Details';
+            });
+            
+            // Load saved state
+            loadCompletionState();
+            
+            // Schedule daily reset
+            scheduleReset();
+        });
+    </script>
+</body>
+</html>
