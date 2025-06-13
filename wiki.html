@@ -255,6 +255,7 @@
 
         .page-content {
             line-height: 1.8;
+            min-height: 300px;
         }
 
         /* Wiki Content Styles */
@@ -263,6 +264,7 @@
             margin: 30px 0 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid var(--border);
+            clear: both;
         }
 
         .wiki-content h2 {
@@ -270,17 +272,20 @@
             margin: 25px 0 15px;
             padding-bottom: 8px;
             border-bottom: 1px solid var(--border);
+            clear: both;
         }
 
         .wiki-content h3 {
             font-size: 20px;
             margin: 20px 0 12px;
+            clear: both;
         }
 
         .wiki-content h4 {
             font-size: 16px;
             margin: 15px 0 10px;
             font-weight: 600;
+            clear: both;
         }
 
         .wiki-content p {
@@ -393,7 +398,7 @@
             max-width: 600px;
         }
 
-        /* Clearfix for floated images */
+        /* Clearfix for floated images and infoboxes */
         .wiki-content::after,
         .page-content::after {
             content: "";
@@ -406,6 +411,12 @@
             clear: none;
         }
 
+        /* Clear floats for new sections */
+        .wiki-content h1, .wiki-content h2, .wiki-content h3, .wiki-content h4,
+        .toc {
+            clear: both;
+        }
+
         /* Table of Contents */
         .toc {
             background: var(--background);
@@ -413,9 +424,7 @@
             border-radius: 8px;
             padding: 20px;
             margin: 20px 0;
-            float: right;
-            max-width: 300px;
-            margin-left: 20px;
+            clear: both;
         }
 
         .toc-title {
@@ -459,6 +468,7 @@
             flex-wrap: wrap;
             position: relative;
             overflow: visible;
+            align-items: center;
         }
 
         .toolbar-btn {
@@ -475,6 +485,16 @@
         .toolbar-btn:hover {
             background: var(--background);
             border-color: var(--primary);
+        }
+
+        .toolbar-btn[style*="margin-left: auto"] {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+        }
+
+        .toolbar-btn[style*="margin-left: auto"]:hover {
+            background: var(--primary-dark);
         }
 
         .editor-area {
@@ -692,6 +712,216 @@
         }
 
         /* Responsive */
+        /* Infobox Styles */
+        .infobox {
+            float: right;
+            width: 300px;
+            margin: 0 0 20px 20px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow);
+            clear: right;
+        }
+
+        .infobox-title {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .infobox-image {
+            width: 100%;
+            background: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .infobox-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .infobox-caption {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .infobox-section {
+            border-top: 1px solid var(--border);
+        }
+
+        .infobox-section-title {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .infobox-row {
+            display: flex;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .infobox-row:last-child {
+            border-bottom: none;
+        }
+
+        .infobox-label {
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+            width: 40%;
+        }
+
+        .infobox-value {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .infobox-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .infobox-value a:hover {
+            text-decoration: underline;
+        }
+
+        .infobox-links {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .infobox-links-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .infobox-link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .infobox-link-list a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .infobox-link-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Infobox Editor */
+        .infobox-editor {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .infobox-editor-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .infobox-field-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .infobox-field-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .field-group-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .info-row input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .info-row button {
+            padding: 6px 10px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .add-row-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .add-row-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .infobox-field-header button {
+            padding: 6px 12px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .infobox-field-header button:hover {
+            background: #dc2626;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -718,6 +948,12 @@
                 float: none;
                 max-width: 100%;
                 margin: 20px 0;
+            }
+
+            .infobox {
+                float: none;
+                width: 100%;
+                margin: 0 0 20px 0;
             }
         }
 
@@ -1015,6 +1251,7 @@
                 this.viewMode = 'view'; // 'view' or 'edit'
                 this.pendingImage = null; // For image insertion
                 this.quickInsertMode = false; // For quick image insertion
+                this.currentPageInfobox = null; // For infobox editing
                 this.init();
             }
 
@@ -1091,23 +1328,39 @@ Create connections between pages using wiki-style links:
 - Red links indicate pages that don't exist yet
 
 ### 🖼️ Images
-- Click the image button in the editor toolbar
-- Upload images via drag & drop or file selection
-- Images are stored locally in your browser
-- Use \`![alt text](wiki:image:image_name)\` syntax
-- Manage all images in the Image Gallery
+- **Upload**: Click the 🖼️ button or drag & drop files
+- **Insert**: Click any image in the gallery
+- **Quick Insert**: Use ⚡🖼️ for original size insertion
+- **Resize & Align**: Choose size and position when inserting
 
-**Advanced Image Options:**
-- Size: \`![alt](wiki:image:name|size:small)\` (small/medium/large)
-- Custom width: \`![alt](wiki:image:name|width:300)\` (in pixels)
+**Image Syntax:**
+- Basic: \`![alt text](wiki:image:image_name)\`
+- With size: \`![alt](wiki:image:name|size:small)\` (small/medium/large)
+- Custom width: \`![alt](wiki:image:name|width:300)\` (pixels)
 - Alignment: \`![alt](wiki:image:name|align:left)\` (left/center/right)
-- Combine options: \`![alt](wiki:image:name|size:large|align:center)\`
+- Combined: \`![alt](wiki:image:name|size:large|align:center)\`
+
+**Tips:**
+- Left/right aligned images allow text to wrap around them
+- Center alignment displays images on their own line
+- All images are stored locally in your browser
 
 ### 🏷️ Organization
 - Categories for grouping related pages
 - Full-text search
 - Recent changes tracking
 - Page history with versioning
+
+### 📊 Infoboxes
+Create Wikipedia-style information boxes:
+- Structured data presentation
+- Main image with caption  
+- Multiple sections with key-value pairs
+- External links section
+- Supports wiki links in values
+- Responsive design (floats right on desktop, full width on mobile)
+
+**See the infobox on this page →**
 
 ### 💾 Local Storage
 All your data is saved locally in your browser. Export and import features coming soon!
@@ -1125,6 +1378,23 @@ Try creating pages for:
 - [[Notes]] - Quick notes and ideas
 - [[Resources]] - Useful links and references
 - [[Journal]] - Daily thoughts and reflections
+
+### Infobox Example
+
+This page has an infobox! →
+
+Edit this page and click the **📊 Infobox** button in the toolbar to see how it works. You can:
+- Add a title and main image
+- Create sections with key-value pairs
+- Include wiki links in values like \`[[Another Page]]\`
+- Add external links
+
+Perfect for pages about:
+- People (with photo, birthdate, occupation, etc.)
+- Companies (logo, founded, headquarters, website)
+- Projects (status, team members, deadline, links)
+- Places (location, population, established)
+- Any structured information!
 
 Happy wiki-ing! 🎉`,
                     categories: ['System'],
@@ -1223,7 +1493,7 @@ Happy wiki-ing! 🎉`,
                 document.getElementById('customWidth').addEventListener('input', () => this.updateSyntaxPreview());
             }
 
-            createPage(title, content, categories = []) {
+            createPage(title, content, categories = [], infobox = null) {
                 const now = new Date().toISOString();
                 const pageId = this.normalizeTitle(title);
 
@@ -1236,6 +1506,7 @@ Happy wiki-ing! 🎉`,
                     title: title,
                     content: content,
                     categories: categories,
+                    infobox: infobox,
                     created: this.pages[pageId]?.created || now,
                     modified: now
                 };
@@ -1262,6 +1533,7 @@ Happy wiki-ing! 🎉`,
 
                 this.history[pageId].unshift({
                     content: this.pages[pageId].content,
+                    infobox: this.pages[pageId].infobox,
                     modified: this.pages[pageId].modified
                 });
 
@@ -1294,6 +1566,7 @@ Happy wiki-ing! 🎉`,
             renderViewer(page) {
                 const html = this.parseWikiText(page.content);
                 const toc = this.generateTOC(html);
+                const infobox = this.renderInfobox(page.infobox);
 
                 return `
                     <div class="page-container">
@@ -1302,12 +1575,90 @@ Happy wiki-ing! 🎉`,
                             <span>📅 Modified: ${new Date(page.modified).toLocaleDateString()}</span>
                             <span>🏷️ Categories: ${page.categories.join(', ') || 'None'}</span>
                         </div>
+                        ${infobox}
                         ${toc}
                         <div class="page-content wiki-content">
                             ${html}
                         </div>
                     </div>
                 `;
+            }
+
+            renderInfobox(infobox) {
+                if (!infobox || !infobox.enabled) return '';
+
+                let html = '<div class="infobox">';
+                
+                // Title
+                if (infobox.title) {
+                    html += `<div class="infobox-title">${infobox.title}</div>`;
+                }
+
+                // Image
+                if (infobox.image && this.images[infobox.image]) {
+                    html += '<div class="infobox-image">';
+                    html += `<img src="${this.images[infobox.image].data}" alt="${infobox.imageCaption || infobox.title}">`;
+                    if (infobox.imageCaption) {
+                        html += `<div class="infobox-caption">${infobox.imageCaption}</div>`;
+                    }
+                    html += '</div>';
+                }
+
+                // Sections
+                if (infobox.sections) {
+                    infobox.sections.forEach(section => {
+                        if (section.rows && section.rows.length > 0) {
+                            html += '<div class="infobox-section">';
+                            if (section.title) {
+                                html += `<div class="infobox-section-title">${section.title}</div>`;
+                            }
+                            section.rows.forEach(row => {
+                                if (row.label && row.value) {
+                                    html += '<div class="infobox-row">';
+                                    html += `<div class="infobox-label">${row.label}:</div>`;
+                                    html += `<div class="infobox-value">${this.parseInfoboxValue(row.value)}</div>`;
+                                    html += '</div>';
+                                }
+                            });
+                            html += '</div>';
+                        }
+                    });
+                }
+
+                // Links
+                if (infobox.links && infobox.links.length > 0) {
+                    html += '<div class="infobox-links">';
+                    html += '<div class="infobox-links-title">External Links</div>';
+                    html += '<div class="infobox-link-list">';
+                    infobox.links.forEach(link => {
+                        if (link.text && link.url) {
+                            html += `<a href="${link.url}" target="_blank">🔗 ${link.text}</a>`;
+                        }
+                    });
+                    html += '</div>';
+                    html += '</div>';
+                }
+
+                html += '</div>';
+                return html;
+            }
+
+            parseInfoboxValue(value) {
+                // Parse wiki links in infobox values - escape HTML first
+                const escaped = value
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+                    
+                return escaped.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, link, text) => {
+                    const pageId = this.normalizeTitle(link);
+                    const displayText = text || link;
+                    const exists = this.pages[pageId];
+                    const className = exists ? 'wiki-link' : 'wiki-link-missing';
+                    return `<a href="#" class="${className}" onclick="wiki.navigateToPage('${pageId}'); return false;">${displayText}</a>`;
+                });
             }
 
             renderEditor(page) {
@@ -1328,12 +1679,113 @@ Happy wiki-ing! 🎉`,
                                 <button class="toolbar-btn" onclick="wiki.insertTable()" title="Insert Table">Table</button>
                                 <button class="toolbar-btn" onclick="wiki.showImageModal()" title="Insert Image with Options">🖼️ Image</button>
                                 <button class="toolbar-btn" onclick="wiki.insertQuickImage()" title="Quick Insert Image (Original Size)">⚡🖼️</button>
+                                <button class="toolbar-btn" onclick="wiki.toggleInfoboxEditor()" title="Toggle Infobox Editor" style="margin-left: auto;">📊 Infobox</button>
+                            </div>
+                            <div id="infoboxEditor" style="display: none;">
+                                ${this.renderInfoboxEditor(page.infobox)}
                             </div>
                             <div class="editor-area">
                                 <textarea class="editor-input" id="editorInput" placeholder="Write in Markdown...">${page.content}</textarea>
                                 <div class="editor-preview wiki-content" id="editorPreview"></div>
                             </div>
                         </div>
+                    </div>
+                `;
+            }
+
+            renderInfoboxEditor(infobox) {
+                const data = infobox || {
+                    enabled: false,
+                    title: '',
+                    image: '',
+                    imageCaption: '',
+                    sections: [{ title: 'Basic Information', rows: [] }],
+                    links: []
+                };
+
+                return `
+                    <div class="infobox-editor">
+                        <div class="infobox-editor-title">
+                            <span>📊 Infobox Editor</span>
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                                <input type="checkbox" id="infoboxEnabled" ${data.enabled ? 'checked' : ''} onchange="wiki.updateInfoboxEnabled()">
+                                <span>Enable Infobox</span>
+                            </label>
+                        </div>
+                        
+                        <div id="infoboxFields" style="${!data.enabled ? 'display: none;' : ''}">
+                            <div class="form-group">
+                                <label class="form-label">Infobox Title</label>
+                                <input type="text" class="form-input" id="infoboxTitle" value="${data.title || ''}" placeholder="e.g., Company Name, Person Name" onchange="wiki.updatePreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Main Image</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <select class="form-input" id="infoboxImage" style="flex: 1;" onchange="wiki.updatePreview()">
+                                        <option value="">No image</option>
+                                        ${Object.entries(this.images).map(([name, img]) => 
+                                            `<option value="${name}" ${data.image === name ? 'selected' : ''}>${img.originalName}</option>`
+                                        ).join('')}
+                                    </select>
+                                    <button class="btn btn-secondary" onclick="wiki.showImageModal()">Upload</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Image Caption</label>
+                                <input type="text" class="form-input" id="infoboxImageCaption" value="${data.imageCaption || ''}" placeholder="Optional caption" onchange="wiki.updatePreview()">
+                            </div>
+
+                            <div id="infoboxSections">
+                                ${data.sections.map((section, sIndex) => this.renderInfoboxSection(section, sIndex)).join('')}
+                            </div>
+
+                            <button class="btn btn-secondary" onclick="wiki.addInfoboxSection()">+ Add Section</button>
+
+                            <div class="infobox-field-group" style="margin-top: 20px;">
+                                <div class="field-group-title">External Links</div>
+                                <div id="infoboxLinks">
+                                    ${data.links.map((link, index) => this.renderInfoboxLink(link, index)).join('')}
+                                </div>
+                                <button class="add-row-btn" onclick="wiki.addInfoboxLink()">+ Add Link</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderInfoboxSection(section, sectionIndex) {
+                return `
+                    <div class="infobox-field-group" data-section-index="${sectionIndex}">
+                        <div class="infobox-field-header">
+                            <input type="text" class="form-input field-group-title" value="${section.title || ''}" placeholder="Section Title" onchange="wiki.updateSectionTitle(${sectionIndex}, this.value)">
+                            <button class="btn btn-danger" onclick="wiki.removeInfoboxSection(${sectionIndex})">Remove Section</button>
+                        </div>
+                        <div class="section-rows">
+                            ${section.rows.map((row, rIndex) => this.renderInfoboxRow(row, sectionIndex, rIndex)).join('')}
+                        </div>
+                        <button class="add-row-btn" onclick="wiki.addInfoboxRow(${sectionIndex})">+ Add Row</button>
+                    </div>
+                `;
+            }
+
+            renderInfoboxRow(row, sectionIndex, rowIndex) {
+                return `
+                    <div class="info-row">
+                        <input type="text" placeholder="Label" value="${row.label || ''}" onchange="wiki.updateInfoboxRow(${sectionIndex}, ${rowIndex}, 'label', this.value)">
+                        <input type="text" placeholder="Value (supports [[wiki links]])" value="${row.value || ''}" onchange="wiki.updateInfoboxRow(${sectionIndex}, ${rowIndex}, 'value', this.value)">
+                        <button onclick="wiki.removeInfoboxRow(${sectionIndex}, ${rowIndex})">×</button>
+                    </div>
+                `;
+            }
+
+            renderInfoboxLink(link, index) {
+                return `
+                    <div class="info-row">
+                        <input type="text" placeholder="Link Text" value="${link.text || ''}" onchange="wiki.updateInfoboxLink(${index}, 'text', this.value)">
+                        <input type="text" placeholder="URL" value="${link.url || ''}" onchange="wiki.updateInfoboxLink(${index}, 'url', this.value)">
+                        <button onclick="wiki.removeInfoboxLink(${index})">×</button>
                     </div>
                 `;
             }
@@ -1723,7 +2175,14 @@ Happy wiki-ing! 🎉`,
                 const content = document.getElementById('editorInput')?.value || '';
                 const preview = document.getElementById('editorPreview');
                 if (preview && content !== undefined) {
-                    preview.innerHTML = this.parseWikiText(content);
+                    // Get current infobox data if enabled
+                    let infoboxHtml = '';
+                    if (document.getElementById('infoboxEnabled')?.checked) {
+                        const infoboxData = this.collectInfoboxData();
+                        infoboxHtml = this.renderInfobox(infoboxData);
+                    }
+                    
+                    preview.innerHTML = infoboxHtml + this.parseWikiText(content);
                 }
             }
 
@@ -1828,7 +2287,7 @@ Happy wiki-ing! 🎉`,
                     return;
                 }
 
-                this.createPage(title, content || `# ${title}\n\nThis page is about ${title}.`, categories);
+                this.createPage(title, content || `# ${title}\n\nThis page is about ${title}.`, categories, null);
                 this.closeModal();
                 this.navigateToPage(this.normalizeTitle(title));
             }
@@ -1856,10 +2315,199 @@ Happy wiki-ing! 🎉`,
 
                 const content = document.getElementById('editorInput').value;
                 const page = this.pages[this.currentPage];
-                this.createPage(page.title, content, page.categories);
+                
+                // Collect infobox data if enabled
+                let infobox = null;
+                if (document.getElementById('infoboxEnabled')?.checked) {
+                    infobox = this.collectInfoboxData();
+                }
+                
+                this.createPage(page.title, content, page.categories, infobox);
                 this.viewMode = 'view';
                 document.getElementById('contentWrapper').innerHTML = this.renderPage(this.currentPage);
                 this.updateActions();
+            }
+
+            collectInfoboxData() {
+                const sections = [];
+                const sectionElements = document.querySelectorAll('#infoboxSections .infobox-field-group');
+                
+                sectionElements.forEach((sectionEl) => {
+                    const titleInput = sectionEl.querySelector('.field-group-title');
+                    if (!titleInput) return;
+                    
+                    const title = titleInput.value;
+                    const rows = [];
+                    const rowElements = sectionEl.querySelectorAll('.info-row');
+                    
+                    rowElements.forEach((rowEl) => {
+                        const inputs = rowEl.querySelectorAll('input');
+                        if (inputs.length >= 2) {
+                            const label = inputs[0].value;
+                            const value = inputs[1].value;
+                            if (label && value) {
+                                rows.push({ label, value });
+                            }
+                        }
+                    });
+                    
+                    if (rows.length > 0 || title) {
+                        sections.push({ title, rows });
+                    }
+                });
+
+                const links = [];
+                const linkElements = document.querySelectorAll('#infoboxLinks .info-row');
+                linkElements.forEach((linkEl) => {
+                    const inputs = linkEl.querySelectorAll('input');
+                    if (inputs.length >= 2) {
+                        const text = inputs[0].value;
+                        const url = inputs[1].value;
+                        if (text && url) {
+                            links.push({ text, url });
+                        }
+                    }
+                });
+
+                const title = document.getElementById('infoboxTitle')?.value || '';
+                const image = document.getElementById('infoboxImage')?.value || '';
+                const imageCaption = document.getElementById('infoboxImageCaption')?.value || '';
+
+                return {
+                    enabled: true,
+                    title: title,
+                    image: image,
+                    imageCaption: imageCaption,
+                    sections: sections,
+                    links: links
+                };
+            }
+
+            // Infobox editing methods
+            toggleInfoboxEditor() {
+                const editor = document.getElementById('infoboxEditor');
+                if (editor) {
+                    editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
+                }
+            }
+
+            updateInfoboxEnabled() {
+                const enabled = document.getElementById('infoboxEnabled').checked;
+                document.getElementById('infoboxFields').style.display = enabled ? 'block' : 'none';
+                this.updatePreview();
+            }
+
+            addInfoboxSection() {
+                if (!this.currentPageInfobox) {
+                    this.currentPageInfobox = { sections: [] };
+                }
+                this.currentPageInfobox.sections.push({ title: '', rows: [] });
+                this.refreshInfoboxSections();
+            }
+
+            removeInfoboxSection(index) {
+                if (this.currentPageInfobox && this.currentPageInfobox.sections) {
+                    this.currentPageInfobox.sections.splice(index, 1);
+                    this.refreshInfoboxSections();
+                }
+            }
+
+            updateSectionTitle(sectionIndex, value) {
+                if (!this.currentPageInfobox) {
+                    this.currentPageInfobox = { sections: [] };
+                }
+                if (this.currentPageInfobox.sections[sectionIndex]) {
+                    this.currentPageInfobox.sections[sectionIndex].title = value;
+                }
+                this.updatePreview();
+            }
+
+            addInfoboxRow(sectionIndex) {
+                if (!this.currentPageInfobox) {
+                    this.currentPageInfobox = { sections: [] };
+                }
+                if (!this.currentPageInfobox.sections[sectionIndex]) {
+                    this.currentPageInfobox.sections[sectionIndex] = { title: '', rows: [] };
+                }
+                this.currentPageInfobox.sections[sectionIndex].rows.push({ label: '', value: '' });
+                this.refreshInfoboxSection(sectionIndex);
+            }
+
+            removeInfoboxRow(sectionIndex, rowIndex) {
+                if (this.currentPageInfobox && this.currentPageInfobox.sections[sectionIndex]) {
+                    this.currentPageInfobox.sections[sectionIndex].rows.splice(rowIndex, 1);
+                    this.refreshInfoboxSection(sectionIndex);
+                }
+            }
+
+            updateInfoboxRow(sectionIndex, rowIndex, field, value) {
+                if (!this.currentPageInfobox) {
+                    this.currentPageInfobox = { sections: [] };
+                }
+                if (!this.currentPageInfobox.sections[sectionIndex]) {
+                    this.currentPageInfobox.sections[sectionIndex] = { title: '', rows: [] };
+                }
+                if (!this.currentPageInfobox.sections[sectionIndex].rows[rowIndex]) {
+                    this.currentPageInfobox.sections[sectionIndex].rows[rowIndex] = { label: '', value: '' };
+                }
+                this.currentPageInfobox.sections[sectionIndex].rows[rowIndex][field] = value;
+                this.updatePreview();
+            }
+
+            addInfoboxLink() {
+                if (!this.currentPageInfobox) {
+                    this.currentPageInfobox = { links: [] };
+                }
+                if (!this.currentPageInfobox.links) {
+                    this.currentPageInfobox.links = [];
+                }
+                this.currentPageInfobox.links.push({ text: '', url: '' });
+                this.refreshInfoboxLinks();
+            }
+
+            removeInfoboxLink(index) {
+                if (this.currentPageInfobox && this.currentPageInfobox.links) {
+                    this.currentPageInfobox.links.splice(index, 1);
+                    this.refreshInfoboxLinks();
+                }
+            }
+
+            updateInfoboxLink(index, field, value) {
+                if (!this.currentPageInfobox) {
+                    this.currentPageInfobox = { links: [] };
+                }
+                if (!this.currentPageInfobox.links[index]) {
+                    this.currentPageInfobox.links[index] = { text: '', url: '' };
+                }
+                this.currentPageInfobox.links[index][field] = value;
+                this.updatePreview();
+            }
+
+            refreshInfoboxSections() {
+                const container = document.getElementById('infoboxSections');
+                if (container && this.currentPageInfobox) {
+                    container.innerHTML = this.currentPageInfobox.sections.map((section, index) => 
+                        this.renderInfoboxSection(section, index)
+                    ).join('');
+                }
+            }
+
+            refreshInfoboxSection(sectionIndex) {
+                const sectionEl = document.querySelector(`[data-section-index="${sectionIndex}"] .section-rows`);
+                if (sectionEl && this.currentPageInfobox && this.currentPageInfobox.sections[sectionIndex]) {
+                    sectionEl.innerHTML = this.currentPageInfobox.sections[sectionIndex].rows.map((row, index) => 
+                        this.renderInfoboxRow(row, sectionIndex, index)
+                    ).join('');
+                }
+            }
+
+            refreshInfoboxLinks() {
+                const container = document.getElementById('infoboxLinks');
+                if (container && this.currentPageInfobox) {
+                    container.innerHTML = this.currentPageInfobox.links.map((link, index) => 
+                        this.renderInfoboxLink(link, index)
+                    ).join('');
+                }
             }
 
             deletePage() {
@@ -1898,8 +2546,11 @@ Happy wiki-ing! 🎉`,
                             <p>Total pages: ${pages.length}</p>
                             <ul>
                                 ${pages.map(([pageId, page]) => `
-                                    <li><a href="#" onclick="wiki.navigateToPage('${pageId}'); return false;">${page.title}</a>
-                                    ${page.categories.length ? `<small> (${page.categories.join(', ')})</small>` : ''}</li>
+                                    <li>
+                                        <a href="#" onclick="wiki.navigateToPage('${pageId}'); return false;">${page.title}</a>
+                                        ${page.infobox?.enabled ? '<span title="Has infobox" style="color: var(--primary); margin-left: 5px;">📊</span>' : ''}
+                                        ${page.categories.length ? `<small> (${page.categories.join(', ')})</small>` : ''}
+                                    </li>
                                 `).join('')}
                             </ul>
                         </div>
@@ -2044,7 +2695,11 @@ Happy wiki-ing! 🎉`,
 
             viewHistoryVersion(index) {
                 const version = this.history[this.currentPage][index];
-                const page = { ...this.pages[this.currentPage], content: version.content };
+                const page = { 
+                    ...this.pages[this.currentPage], 
+                    content: version.content,
+                    infobox: version.infobox 
+                };
                 
                 const content = `
                     <div class="page-container">
@@ -2078,6 +2733,18 @@ Happy wiki-ing! 🎉`,
         function toggleViewMode() {
             if (wiki.viewMode === 'view') {
                 wiki.viewMode = 'edit';
+                
+                // Load current page's infobox data for editing
+                const page = wiki.pages[wiki.currentPage];
+                wiki.currentPageInfobox = page.infobox ? JSON.parse(JSON.stringify(page.infobox)) : {
+                    enabled: false,
+                    title: '',
+                    image: '',
+                    imageCaption: '',
+                    sections: [{ title: 'Basic Information', rows: [] }],
+                    links: []
+                };
+                
                 document.getElementById('contentWrapper').innerHTML = wiki.renderPage(wiki.currentPage);
                 
                 // Set up editor preview
@@ -2089,6 +2756,7 @@ Happy wiki-ing! 🎉`,
                 }
             } else {
                 wiki.viewMode = 'view';
+                wiki.currentPageInfobox = null;
                 document.getElementById('contentWrapper').innerHTML = wiki.renderPage(wiki.currentPage);
             }
             wiki.updateActions();
