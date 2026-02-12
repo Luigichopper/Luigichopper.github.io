@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>日本語 — Japanese Learning Hub</title>
+  <title>Japan 2027 Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +28,6 @@
       overflow-x: hidden;
     }
 
-    /* ── BACKGROUND TEXTURE ── */
     body::before {
       content: '';
       position: fixed;
@@ -40,11 +39,69 @@
       z-index: 0;
     }
 
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,246,239,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav-logo span { color: var(--red); }
+
+    .nav-tabs { display: flex; gap: 4px; }
+
+    .nav-tab {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s ease;
+    }
+
+    .nav-tab:hover { color: var(--ink); background: rgba(26,20,16,0.05); }
+
+    .nav-tab.active {
+      color: var(--red);
+      border-color: rgba(192,57,43,0.25);
+      background: rgba(192,57,43,0.06);
+    }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
     /* ── HERO ── */
     .hero {
       position: relative;
       z-index: 1;
-      padding: 80px 40px 60px;
+      padding: 72px 40px 56px;
       max-width: 900px;
       margin: 0 auto;
     }
@@ -56,8 +113,7 @@
       color: var(--red);
       opacity: 0.12;
       position: absolute;
-      top: 20px;
-      right: 30px;
+      top: 20px; right: 30px;
       line-height: 1;
       letter-spacing: -4px;
       user-select: none;
@@ -78,8 +134,7 @@
 
     .hero-label::after {
       content: '';
-      flex: 1;
-      max-width: 40px;
+      flex: 1; max-width: 40px;
       height: 1px;
       background: var(--red);
       opacity: 0.5;
@@ -94,9 +149,7 @@
       margin-bottom: 20px;
     }
 
-    .hero h1 span {
-      color: var(--red);
-    }
+    .hero h1 span { color: var(--red); }
 
     .hero-sub {
       font-size: 16px;
@@ -127,13 +180,12 @@
     }
 
     .meta-chip .dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--red);
     }
 
-    /* ── DIVIDER ── */
+    /* ── SECTION DIVIDER ── */
     .section-divider {
       max-width: 900px;
       margin: 0 auto 48px;
@@ -201,19 +253,11 @@
       transition: transform 0.3s ease;
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 32px rgba(26,20,16,0.1);
-      border-color: rgba(192,57,43,0.3);
-    }
-
-    .card:hover::before {
-      transform: scaleX(1);
-    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(26,20,16,0.1); border-color: rgba(192,57,43,0.3); }
+    .card:hover::before { transform: scaleX(1); }
 
     .card-icon {
-      width: 44px;
-      height: 44px;
+      width: 44px; height: 44px;
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -222,10 +266,10 @@
       flex-shrink: 0;
     }
 
-    .card-icon.red { background: rgba(192,57,43,0.1); }
-    .card-icon.gold { background: rgba(184,134,11,0.1); }
-    .card-icon.blue { background: rgba(42,82,152,0.08); font-family: 'Shippori Mincho', serif; font-weight: 800; color: #2a5298; font-size: 20px; }
-    .card-icon.green { background: rgba(39,124,67,0.08); }
+    .card-icon.red    { background: rgba(192,57,43,0.1); }
+    .card-icon.gold   { background: rgba(184,134,11,0.1); }
+    .card-icon.green  { background: rgba(39,124,67,0.08); }
+    .card-icon.blue   { background: rgba(42,82,152,0.08); font-family: 'Shippori Mincho', serif; font-weight: 800; color: #2a5298; font-size: 20px; }
 
     .card-tag {
       font-size: 10px;
@@ -261,41 +305,10 @@
       margin-top: 4px;
     }
 
-    .card-cta svg {
-      transition: transform 0.2s;
-    }
+    .card-cta svg { transition: transform 0.2s; }
+    .card:hover .card-cta svg { transform: translateX(4px); }
 
-    .card:hover .card-cta svg {
-      transform: translateX(4px);
-    }
-
-    /* ── WIDE CARD ── */
-    .card.wide {
-      grid-column: 1 / -1;
-      flex-direction: row;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .card.wide .card-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .card.wide .card-aside {
-      flex-shrink: 0;
-      font-family: 'Shippori Mincho', serif;
-      font-size: 64px;
-      font-weight: 800;
-      color: var(--red);
-      opacity: 0.15;
-      line-height: 1;
-      user-select: none;
-    }
-
-    /* ── PROGRESS SECTION ── */
+    /* ── PROGRESS ── */
     .progress-section {
       max-width: 900px;
       margin: 0 auto 60px;
@@ -318,35 +331,14 @@
       margin-bottom: 20px;
     }
 
-    .progress-header h3 {
-      font-family: 'Shippori Mincho', serif;
-      font-size: 16px;
-      font-weight: 600;
-    }
+    .progress-header h3 { font-family: 'Shippori Mincho', serif; font-size: 16px; font-weight: 600; }
+    .progress-header span { font-size: 12px; color: var(--muted); }
 
-    .progress-header span {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .jlpt-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 12px;
-    }
-
-    .jlpt-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      width: 36px;
-      flex-shrink: 0;
-    }
+    .jlpt-row { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .jlpt-label { font-size: 12px; font-weight: 500; color: var(--muted); width: 36px; flex-shrink: 0; }
 
     .jlpt-bar-track {
-      flex: 1;
-      height: 6px;
+      flex: 1; height: 6px;
       background: rgba(26,20,16,0.07);
       border-radius: 99px;
       overflow: hidden;
@@ -361,38 +353,86 @@
       transform: scaleX(0);
     }
 
-    @keyframes barFill {
-      to { transform: scaleX(1); }
+    @keyframes barFill { to { transform: scaleX(1); } }
+
+    .jlpt-note { font-size: 11px; color: var(--muted); width: 60px; text-align: right; flex-shrink: 0; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+      position: relative;
+      z-index: 1;
     }
 
-    .jlpt-bar-fill.dim { background: var(--border); }
+    .empty-box {
+      border: 1.5px dashed var(--border);
+      border-radius: 16px;
+      padding: 72px 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
 
-    .jlpt-note {
-      font-size: 11px;
+    .empty-kana {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 56px;
+      color: var(--red);
+      opacity: 0.18;
+      line-height: 1;
+    }
+
+    .empty-box h3 {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .empty-box p {
+      font-size: 14px;
+      font-weight: 300;
       color: var(--muted);
-      width: 60px;
-      text-align: right;
-      flex-shrink: 0;
+      max-width: 380px;
+      line-height: 1.75;
+    }
+
+    .empty-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .empty-tag {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 5px 13px;
+      border-radius: 20px;
     }
 
     /* ── FOOTER ── */
     .footer {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0 40px 60px;
+      padding: 28px 40px 60px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-top: 1px solid var(--border);
-      padding-top: 28px;
       position: relative;
       z-index: 1;
     }
 
-    .footer-text {
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .footer-text { font-size: 12px; color: var(--muted); }
 
     .footer-kana {
       font-family: 'Shippori Mincho', serif;
@@ -408,9 +448,7 @@
       animation: fadeIn 0.6s ease forwards;
     }
 
-    @keyframes fadeIn {
-      to { opacity: 1; transform: none; }
-    }
+    @keyframes fadeIn { to { opacity: 1; transform: none; } }
 
     .fade-in:nth-child(1) { animation-delay: 0.1s; }
     .fade-in:nth-child(2) { animation-delay: 0.2s; }
@@ -419,132 +457,170 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
-      .hero, .grid, .section-divider, .progress-section, .footer { padding-left: 20px; padding-right: 20px; }
-      .card.wide { flex-direction: column; }
-      .card.wide .card-aside { display: none; }
+      .nav-inner, .hero, .grid, .section-divider,
+      .progress-section, .footer, .empty-state { padding-left: 20px; padding-right: 20px; }
       .grid { grid-template-columns: 1fr; }
+      .nav-tab { padding: 6px 10px; font-size: 12px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
-  <header class="hero fade-in">
-    <div class="hero-kana" aria-hidden="true">日本語</div>
-    <p class="hero-label">Japan 2027</p>
-    <h1>My Japanese<br /><span>Learning Hub</span></h1>
-    <p class="hero-sub">Resources, tools, and playlists collected for the road to Japan — targeting N4–N3 before the trip.</p>
-    <div class="hero-meta">
-      <span class="meta-chip"><span class="dot"></span>Goal: N4–N3</span>
-      <span class="meta-chip"><span class="dot"></span>Trip: Early–Mid 2027</span>
-      <span class="meta-chip"><span class="dot"></span>4 Resources</span>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <span class="nav-logo" onclick="showPage('learning')">Japan <span>2027</span></span>
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="tab-learning" onclick="showPage('learning')">📖 Learning</button>
+        <button class="nav-tab"        id="tab-travel"   onclick="showPage('travel')">✈️ Travel</button>
+      </div>
     </div>
-  </header>
+  </nav>
 
-  <!-- RESOURCES SECTION -->
-  <div class="section-divider">
-    <h2>Resources</h2>
+
+  <!-- ══════════════════════════════════════
+       PAGE 1 — LEARNING
+  ══════════════════════════════════════ -->
+  <div class="page active" id="page-learning">
+
+    <header class="hero fade-in">
+      <div class="hero-kana" aria-hidden="true">日本語</div>
+      <p class="hero-label">Japan 2027</p>
+      <h1>My Japanese<br /><span>Learning Hub</span></h1>
+      <p class="hero-sub">Resources, tools, and playlists collected for the road to Japan — targeting N4–N3 before the trip.</p>
+      <div class="hero-meta">
+        <span class="meta-chip"><span class="dot"></span>Goal: N4–N3</span>
+        <span class="meta-chip"><span class="dot"></span>Trip: Early–Mid 2027</span>
+        <span class="meta-chip"><span class="dot"></span>4 Resources</span>
+      </div>
+    </header>
+
+    <div class="section-divider"><h2>Resources</h2></div>
+
+    <main class="grid">
+
+      <a class="card fade-in" href="https://ankiweb.net/shared/info/1196762551" target="_blank" rel="noopener">
+        <div class="card-icon red">🃏</div>
+        <span class="card-tag">Flashcards · Anki</span>
+        <h3>Kaishi 1.5k Vocabulary Deck</h3>
+        <p>A modern, beginner-friendly Anki deck covering 1,500 essential Japanese words with native audio, example sentences, and pitch accent support. One of the best-regarded starting decks in the community.</p>
+        <span class="card-cta">Open on AnkiWeb <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+      </a>
+
+      <a class="card fade-in" href="https://www.youtube.com/@JapaneseFromZero" target="_blank" rel="noopener">
+        <div class="card-icon gold">📚</div>
+        <span class="card-tag">Video Series · YouTube</span>
+        <h3>Japanese From Zero! Books 1–5</h3>
+        <p>The full video companion series to the popular Japanese From Zero! textbooks. Covers beginner through intermediate grammar and vocabulary in a structured, progressive format — great for N5 to N4 range.</p>
+        <span class="card-cta">Watch on YouTube <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+      </a>
+
+      <a class="card fade-in" href="https://youtube.com/playlist?list=PLPA2NZ_ucqBnc6XHi-lozp95aBan0dUTl" target="_blank" rel="noopener">
+        <div class="card-icon green">⛏️</div>
+        <span class="card-tag">Immersion · YouTube</span>
+        <h3>Japanese Learning with Minecraft</h3>
+        <p>Learn Japanese vocabulary and phrases through the context of Minecraft gameplay. A fun, low-pressure way to absorb the language — great for picking up everyday words and gaming-related vocab.</p>
+        <span class="card-cta">Watch on YouTube <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+      </a>
+
+      <a class="card fade-in" href="https://bunpro.jp/dashboard" target="_blank" rel="noopener">
+        <div class="card-icon blue">文</div>
+        <span class="card-tag">Grammar · SRS</span>
+        <h3>Bunpro Dashboard</h3>
+        <p>An SRS-based grammar study platform that drills Japanese grammar points from N5 through N1. Pairs perfectly with the Kaishi vocab deck — while Anki builds your words, Bunpro builds the structure around them.</p>
+        <span class="card-cta">Open Bunpro <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+      </a>
+
+    </main>
+
+    <div class="section-divider"><h2>JLPT Roadmap</h2></div>
+
+    <section class="progress-section fade-in">
+      <div class="progress-card">
+        <div class="progress-header">
+          <h3>Level Progression — N5 → N3</h3>
+          <span>Target: N4–N3 by 2027</span>
+        </div>
+        <div class="jlpt-row">
+          <span class="jlpt-label">N5</span>
+          <div class="jlpt-bar-track"><div class="jlpt-bar-fill" style="width:100%; animation-delay:0.2s;"></div></div>
+          <span class="jlpt-note">~800 words</span>
+        </div>
+        <div class="jlpt-row">
+          <span class="jlpt-label">N4</span>
+          <div class="jlpt-bar-track"><div class="jlpt-bar-fill" style="width:60%; animation-delay:0.35s;"></div></div>
+          <span class="jlpt-note">~1,500 words</span>
+        </div>
+        <div class="jlpt-row">
+          <span class="jlpt-label">N3</span>
+          <div class="jlpt-bar-track"><div class="jlpt-bar-fill" style="width:20%; animation-delay:0.5s; background:var(--border);"></div></div>
+          <span class="jlpt-note">~3,700 words</span>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:18px; line-height:1.6;">
+          The Kaishi 1.5k deck gets you solidly through N5–N4 range. Adjust these bars as you progress — you're building toward being conversational enough for the Japan trip. ✈️
+        </p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p class="footer-text">頑張れ — Keep going. Japan 2027 🇯🇵</p>
+      <span class="footer-kana" aria-hidden="true">勉強</span>
+    </footer>
+
   </div>
 
-  <main class="grid">
 
-    <!-- Kaishi Anki Deck -->
-    <a class="card fade-in" href="https://ankiweb.net/shared/info/1196762551" target="_blank" rel="noopener">
-      <div class="card-icon red">🃏</div>
-      <span class="card-tag">Flashcards · Anki</span>
-      <h3>Kaishi 1.5k Vocabulary Deck</h3>
-      <p>A modern, beginner-friendly Anki deck covering 1,500 essential Japanese words with native audio, example sentences, and pitch accent support. One of the best-regarded starting decks in the community.</p>
-      <span class="card-cta">
-        Open on AnkiWeb
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </span>
-    </a>
+  <!-- ══════════════════════════════════════
+       PAGE 2 — TRAVEL
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-travel">
 
-    <!-- Japanese From Zero -->
-    <a class="card fade-in" href="https://www.youtube.com/@JapaneseFromZero" target="_blank" rel="noopener">
-      <div class="card-icon gold">📚</div>
-      <span class="card-tag">Video Series · YouTube</span>
-      <h3>Japanese From Zero! Books 1–5</h3>
-      <p>The full video companion series to the popular Japanese From Zero! textbooks. Covers beginner through intermediate grammar and vocabulary in a structured, progressive format — great for N5 to N4 range.</p>
-      <span class="card-cta">
-        Watch on YouTube
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </span>
-    </a>
+    <header class="hero fade-in">
+      <div class="hero-kana" aria-hidden="true">旅行</div>
+      <p class="hero-label">Japan 2027</p>
+      <h1>Japanese<br /><span>Travel Hub</span></h1>
+      <p class="hero-sub">Trip planning, itineraries, places to visit, and travel resources — everything for the 2027 trip in one place.</p>
+      <div class="hero-meta">
+        <span class="meta-chip"><span class="dot"></span>Trip: Early–Mid 2027</span>
+        <span class="meta-chip"><span class="dot"></span>Resources coming soon</span>
+      </div>
+    </header>
 
-    <!-- Japanese with Minecraft -->
-    <a class="card fade-in" href="https://youtube.com/playlist?list=PLPA2NZ_ucqBnc6XHi-lozp95aBan0dUTl" target="_blank" rel="noopener">
-      <div class="card-icon green">⛏️</div>
-      <span class="card-tag">Immersion · YouTube</span>
-      <h3>Japanese Learning with Minecraft</h3>
-      <p>Learn Japanese vocabulary and phrases through the context of Minecraft gameplay. A fun, low-pressure way to absorb the language — great for picking up everyday words and gaming-related vocab.</p>
-      <span class="card-cta">
-        Watch on YouTube
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </span>
-    </a>
+    <div class="section-divider"><h2>Travel Resources</h2></div>
 
-    <!-- Bunpro -->
-    <a class="card fade-in" href="https://bunpro.jp/dashboard" target="_blank" rel="noopener">
-      <div class="card-icon blue">文</div>
-      <span class="card-tag">Grammar · SRS</span>
-      <h3>Bunpro Dashboard</h3>
-      <p>An SRS-based grammar study platform that drills Japanese grammar points from N5 through N1. Pairs perfectly with the Kaishi vocab deck — while Anki builds your words, Bunpro builds the structure around them.</p>
-      <span class="card-cta">
-        Open Bunpro
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </span>
-    </a>
+    <div class="empty-state">
+      <div class="empty-box fade-in">
+        <div class="empty-kana" aria-hidden="true">旅</div>
+        <h3>No resources yet</h3>
+        <p>This is where your travel guides, itinerary links, maps, and trip resources will live. Add them whenever you're ready.</p>
+        <div class="empty-tags">
+          <span class="empty-tag">Itinerary</span>
+          <span class="empty-tag">Places</span>
+          <span class="empty-tag">Food</span>
+          <span class="empty-tag">Shopping</span>
+          <span class="empty-tag">Transport</span>
+          <span class="empty-tag">Accommodation</span>
+        </div>
+      </div>
+    </div>
 
-  </main>
+    <footer class="footer">
+      <p class="footer-text">もうすぐ — Almost there. Japan 2027 🗾</p>
+      <span class="footer-kana" aria-hidden="true">旅行</span>
+    </footer>
 
-  <!-- JLPT PROGRESS TRACKER -->
-  <div class="section-divider">
-    <h2>JLPT Roadmap</h2>
   </div>
 
-  <section class="progress-section fade-in">
-    <div class="progress-card">
-      <div class="progress-header">
-        <h3>Level Progression — N5 → N3</h3>
-        <span>Target: N4–N3 by 2027</span>
-      </div>
 
-      <div class="jlpt-row">
-        <span class="jlpt-label">N5</span>
-        <div class="jlpt-bar-track">
-          <div class="jlpt-bar-fill" style="width: 100%; animation-delay: 0.2s;"></div>
-        </div>
-        <span class="jlpt-note">~800 words</span>
-      </div>
-
-      <div class="jlpt-row">
-        <span class="jlpt-label">N4</span>
-        <div class="jlpt-bar-track">
-          <div class="jlpt-bar-fill" style="width: 60%; animation-delay: 0.35s;"></div>
-        </div>
-        <span class="jlpt-note">~1,500 words</span>
-      </div>
-
-      <div class="jlpt-row">
-        <span class="jlpt-label">N3</span>
-        <div class="jlpt-bar-track">
-          <div class="jlpt-bar-fill dim" style="width: 20%; animation-delay: 0.5s; background: var(--border);"></div>
-        </div>
-        <span class="jlpt-note">~3,700 words</span>
-      </div>
-
-      <p style="font-size: 12px; color: var(--muted); margin-top: 18px; line-height: 1.6;">
-        The Kaishi 1.5k deck gets you solidly through N5–N4 range. Adjust these bars as you progress — you're building toward being conversational enough for the Japan trip. ✈️
-      </p>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <p class="footer-text">頑張れ — Keep going. Japan 2027 🇯🇵</p>
-    <span class="footer-kana" aria-hidden="true">勉強</span>
-  </footer>
+  <script>
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
 
 </body>
 </html>
