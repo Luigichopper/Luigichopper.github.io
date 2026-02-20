@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quill — Novel Writing App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-primary:#FAF8F5;--bg-secondary:#F0EBE5;--bg-tertiary:#E6DFD7;
+  --bg-editor:#FFFFFF;--bg-toolbar:#FAF8F5;--bg-modal:#FFFFFF;--bg-overlay:rgba(0,0,0,0.25);
+  --text-primary:#2C2828;--text-secondary:#6B6360;--text-tertiary:#9B9590;--text-inverse:#FAF8F5;
+  --accent:#8B6847;--accent-hover:#74573A;--accent-light:rgba(139,104,71,0.10);--accent-text:#8B6847;
+  --border:#DDD6CE;--border-light:#EBE5DE;--border-focus:#8B6847;
+  --font-ui:'DM Sans',system-ui,sans-serif;--font-editor:'Lora',Georgia,serif;
+  --sidebar-w:264px;--toolbar-h:42px;--status-h:30px;--editor-max-w:740px;
+  --shadow-sm:0 1px 2px rgba(44,40,40,0.05);--shadow-md:0 4px 16px rgba(44,40,40,0.10);--shadow-lg:0 8px 32px rgba(44,40,40,0.14);
+  --radius:6px;--radius-lg:10px;--transition:150ms ease;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font-ui);background:var(--bg-primary);color:var(--text-primary);font-size:13px;line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,textarea{font-family:inherit;font-size:inherit;color:inherit;border:1px solid var(--border);background:var(--bg-editor);border-radius:var(--radius);padding:6px 10px;outline:none;transition:border var(--transition)}
+input:focus,textarea:focus{border-color:var(--border-focus)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-tertiary)}
+
+/* ── APP LAYOUT ── */
+#app{display:flex;height:100vh;width:100vw;overflow:hidden}
+
+/* ── SIDEBAR ── */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100%;display:flex;flex-direction:column;background:var(--bg-secondary);border-right:1px solid var(--border);transition:margin var(--transition),opacity var(--transition);overflow:hidden;z-index:10}
+#sidebar.collapsed{margin-left:calc(-1 * var(--sidebar-w));opacity:0;pointer-events:none}
+.sidebar-header{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.sidebar-logo{font-size:16px;font-weight:700;letter-spacing:-0.3px;display:flex;align-items:center;gap:7px;color:var(--text-primary)}
+.sidebar-logo svg{opacity:0.7}
+.sidebar-actions{display:flex;gap:2px}
+.sidebar-actions button,.sidebar-header button{padding:5px;border-radius:var(--radius);color:var(--text-secondary);transition:all var(--transition)}
+.sidebar-actions button:hover,.sidebar-header button:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.sidebar-tree{flex:1;overflow-y:auto;padding:4px 8px 8px}
+.sidebar-footer{padding:8px;border-top:1px solid var(--border);flex-shrink:0}
+
+/* Tree items */
+.tree-book{margin-bottom:2px}
+.tree-item{display:flex;align-items:center;padding:5px 8px;border-radius:var(--radius);cursor:pointer;gap:6px;transition:all var(--transition);position:relative;user-select:none}
+.tree-item:hover{background:var(--bg-tertiary)}
+.tree-item.active{background:var(--accent-light);color:var(--accent-text);font-weight:500}
+.tree-item .label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+.tree-item .icon{flex-shrink:0;width:16px;height:16px;display:flex;align-items:center;justify-content:center;opacity:0.55;font-size:11px}
+.tree-item.book-item{font-weight:600;font-size:12.5px;padding:6px 8px}
+.tree-item.book-item .icon{opacity:0.7}
+.tree-item.part-item{padding-left:20px;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-secondary)}
+.tree-item.chapter-item{padding-left:28px;font-size:12.5px}
+.tree-item.part-child{padding-left:36px}
+.tree-item .menu-btn{opacity:0;padding:2px 4px;border-radius:3px;font-size:14px;line-height:1;flex-shrink:0;color:var(--text-tertiary);transition:all var(--transition)}
+.tree-item:hover .menu-btn{opacity:1}
+.tree-item .menu-btn:hover{color:var(--text-primary);background:var(--bg-primary)}
+.tree-add{display:flex;align-items:center;gap:5px;padding:4px 8px;font-size:11.5px;color:var(--text-tertiary);border-radius:var(--radius);transition:all var(--transition);cursor:pointer}
+.tree-add:hover{color:var(--accent);background:var(--accent-light)}
+.tree-add.indent-1{padding-left:20px}
+.tree-add.indent-2{padding-left:28px}
+.book-chapters{overflow:hidden}
+.book-chapters.collapsed-parts{max-height:0}
+.btn-new-book{width:100%;padding:7px 12px;border-radius:var(--radius);font-size:12.5px;font-weight:500;color:var(--text-secondary);border:1px dashed var(--border);transition:all var(--transition);display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-new-book:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+/* ── MAIN AREA ── */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%}
+
+/* Toolbar wrapper */
+#toolbar-wrap{flex-shrink:0;background:var(--bg-toolbar);border-bottom:1px solid var(--border-light)}
+/* Primary toolbar row */
+#toolbar{min-height:var(--toolbar-h);display:flex;align-items:center;gap:0;padding:0 12px 0 0;overflow:hidden}
+.tool-btn{padding:5px 7px;border-radius:4px;font-size:13px;line-height:1;color:var(--text-secondary);transition:all var(--transition);display:flex;align-items:center;justify-content:center;min-width:28px;height:28px;flex-shrink:0}
+.tool-btn:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.tool-btn.active{background:var(--accent-light);color:var(--accent-text)}
+.tool-btn svg{width:15px;height:15px}
+.tool-sep{width:1px;height:18px;background:var(--border-light);margin:0 4px;flex-shrink:0}
+.tool-select{padding:3px 6px;border-radius:4px;font-size:12px;border:1px solid var(--border-light);background:var(--bg-editor);color:var(--text-secondary);cursor:pointer;flex-shrink:0}
+.toolbar-left{display:flex;align-items:center;gap:1px;flex:1;min-width:0;padding:6px 0 6px 12px}
+.toolbar-right{display:flex;align-items:center;gap:4px;flex-shrink:0;margin-left:6px;padding-left:6px;border-left:1px solid var(--border-light)}
+.sidebar-toggle{display:flex}
+/* Extension toolbar row */
+#ext-toolbar-row{display:none;align-items:center;gap:2px;padding:2px 12px 5px;border-top:1px solid var(--border-light);flex-wrap:wrap}
+#ext-toolbar-row.has-items{display:flex}
+#ext-toolbar-row .tool-sep{height:14px;margin:0 3px}
+#ext-toolbar-row .ext-row-label{font-size:10px;color:var(--text-tertiary);margin-right:4px;text-transform:uppercase;letter-spacing:0.3px;font-weight:600;flex-shrink:0}
+#ext-toolbar-items{display:contents}
+
+/* Editor */
+#editor-wrap{flex:1;overflow-y:auto;background:var(--bg-editor);position:relative}
+#chapter-title{font-family:var(--font-editor);font-size:28px;font-weight:700;border:none;background:none;outline:none;width:100%;padding:48px 0 4px;color:var(--text-primary);letter-spacing:-0.3px;line-height:1.25}
+#chapter-title::placeholder{color:var(--text-tertiary);opacity:0.5}
+#editor{font-family:var(--font-editor);font-size:16.5px;line-height:1.8;outline:none;min-height:300px;padding-bottom:40vh;color:var(--text-primary);word-wrap:break-word;overflow-wrap:break-word}
+#editor:empty::before{content:attr(data-placeholder);color:var(--text-tertiary);opacity:0.4;pointer-events:none}
+#editor p{margin-bottom:0.4em}
+#editor h1{font-size:1.8em;margin:1em 0 0.4em;font-weight:700;line-height:1.3}
+#editor h2{font-size:1.4em;margin:0.9em 0 0.35em;font-weight:700;line-height:1.35}
+#editor h3{font-size:1.15em;margin:0.8em 0 0.3em;font-weight:700;line-height:1.4}
+#editor blockquote{border-left:3px solid var(--border);padding-left:16px;margin:0.8em 0;color:var(--text-secondary);font-style:italic}
+#editor hr{border:none;border-top:1px solid var(--border);margin:1.5em 0}
+#editor ul,#editor ol{padding-left:1.5em;margin:0.5em 0}
+#editor li{margin-bottom:0.2em}
+#editor-inner{max-width:var(--editor-max-w);margin:0 auto;padding:0 48px 100px}
+.no-chapter-msg{display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-tertiary);font-size:14px;font-style:italic}
+
+/* Status bar */
+#status-bar{height:var(--status-h);min-height:var(--status-h);display:flex;align-items:center;padding:0 16px;background:var(--bg-primary);border-top:1px solid var(--border-light);font-size:11px;color:var(--text-tertiary);gap:16px;flex-shrink:0}
+#status-bar .sep{width:1px;height:12px;background:var(--border-light)}
+.status-right{margin-left:auto;display:flex;gap:12px;align-items:center}
+#save-indicator{transition:opacity 0.3s}
+#ext-status-items{display:flex;gap:12px;align-items:center}
+
+/* ── CONTEXT MENU ── */
+.ctx-menu{position:fixed;background:var(--bg-modal);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);padding:4px;z-index:1000;min-width:150px;font-size:12.5px}
+.ctx-menu button{display:block;width:100%;text-align:left;padding:6px 10px;border-radius:4px;transition:all var(--transition)}
+.ctx-menu button:hover{background:var(--bg-tertiary)}
+.ctx-menu .ctx-danger:hover{background:#FEE;color:#C33}
+.ctx-sep{height:1px;background:var(--border-light);margin:3px 0}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:var(--bg-overlay);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg-modal);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:90%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(8px);transition:transform 0.2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.modal-header h2{font-size:15px;font-weight:600}
+.modal-close{padding:4px;border-radius:4px;color:var(--text-tertiary);transition:all var(--transition)}
+.modal-close:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
+.btn{padding:6px 14px;border-radius:var(--radius);font-size:12.5px;font-weight:500;transition:all var(--transition)}
+.btn-primary{background:var(--accent);color:var(--text-inverse)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--bg-tertiary);color:var(--text-primary)}
+.btn-secondary:hover{background:var(--border)}
+.btn-danger{background:#E55;color:#fff}
+.btn-danger:hover{background:#D33}
+
+/* Extension manager */
+.ext-card{display:flex;align-items:center;padding:10px 12px;border:1px solid var(--border-light);border-radius:var(--radius);margin-bottom:8px;gap:10px}
+.ext-card .ext-info{flex:1;min-width:0}
+.ext-card .ext-name{font-weight:600;font-size:13px}
+.ext-card .ext-ver{font-size:11px;color:var(--text-tertiary);margin-left:6px}
+.ext-card .ext-desc{font-size:11.5px;color:var(--text-secondary);margin-top:1px}
+.ext-toggle{position:relative;width:36px;height:20px;border-radius:10px;background:var(--border);cursor:pointer;transition:background 0.2s;flex-shrink:0}
+.ext-toggle.on{background:var(--accent)}
+.ext-toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform 0.2s;box-shadow:var(--shadow-sm)}
+.ext-toggle.on::after{transform:translateX(16px)}
+.ext-actions{display:flex;gap:4px;flex-shrink:0}
+.ext-actions button{padding:4px 6px;border-radius:4px;font-size:11px;color:var(--text-tertiary)}
+.ext-actions button:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.ext-add-section{margin-top:16px}
+.ext-add-section h3{font-size:13px;font-weight:600;margin-bottom:8px}
+.ext-add-tabs{display:flex;gap:0;margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.ext-add-tabs button{flex:1;padding:6px;font-size:12px;font-weight:500;border-right:1px solid var(--border);transition:all var(--transition)}
+.ext-add-tabs button:last-child{border-right:none}
+.ext-add-tabs button.active{background:var(--accent-light);color:var(--accent-text)}
+.ext-add-tabs button:hover:not(.active){background:var(--bg-tertiary)}
+#ext-paste-area{width:100%;height:120px;font-family:'Courier New',monospace;font-size:12px;resize:vertical;border:1px solid var(--border);border-radius:var(--radius);padding:8px;background:var(--bg-editor)}
+.ext-upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-tertiary);cursor:pointer;transition:all var(--transition)}
+.ext-upload-zone:hover{border-color:var(--accent);color:var(--accent)}
+.ext-upload-zone input{display:none}
+
+/* Export modal */
+.export-option{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border-light);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:all var(--transition)}
+.export-option:hover{border-color:var(--accent);background:var(--accent-light)}
+.export-option .exp-icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);border-radius:var(--radius)}
+.export-option .exp-info h4{font-size:13px;font-weight:600}
+.export-option .exp-info p{font-size:11.5px;color:var(--text-secondary)}
+
+/* Search bar */
+#search-bar{display:none;align-items:center;gap:8px;padding:6px 12px;background:var(--bg-toolbar);border-bottom:1px solid var(--border-light)}
+#search-bar.open{display:flex}
+#search-bar input{flex:1;height:28px;font-size:12.5px}
+#search-bar .search-count{font-size:11px;color:var(--text-tertiary);white-space:nowrap}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--text-primary);color:var(--text-inverse);padding:8px 16px;border-radius:var(--radius);font-size:12.5px;z-index:2000;opacity:0;transform:translateY(8px);transition:all 0.3s;pointer-events:none;box-shadow:var(--shadow-md)}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* Focus mode */
+body.focus-mode #sidebar{margin-left:calc(-1 * var(--sidebar-w));opacity:0;pointer-events:none}
+body.focus-mode #toolbar-wrap{opacity:0;max-height:0;overflow:hidden;border:none}
+body.focus-mode #status-bar{opacity:0;height:0;min-height:0;overflow:hidden;border:none}
+body.focus-mode #search-bar{display:none!important}
+body.focus-mode #editor-wrap{background:var(--bg-primary)}
+
+/* Rename input */
+.rename-input{width:100%;font-size:inherit;font-weight:inherit;padding:1px 4px;border:1px solid var(--border-focus);border-radius:3px;background:var(--bg-editor);outline:none}
+
+@media(max-width:768px){
+  :root{--sidebar-w:240px}
+  #editor-inner{padding:0 20px 80px}
+  #chapter-title{padding-top:28px;font-size:24px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.85 2.85 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        Quill
+      </div>
+      <div class="sidebar-actions">
+        <button onclick="openModal('export')" title="Export"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+        <button onclick="openModal('extensions')" title="Extensions"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+      </div>
+    </div>
+    <div class="sidebar-tree" id="sidebar-tree"></div>
+    <div class="sidebar-footer">
+      <button class="btn-new-book" onclick="createBook()">+ New Book</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="toolbar-wrap">
+    <div id="toolbar">
+      <div class="toolbar-left">
+        <button class="tool-btn sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar (Ctrl+\\)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+        <div class="tool-sep"></div>
+        <select class="tool-select" id="block-type" onchange="setBlockType(this.value)" title="Block type">
+          <option value="p">Paragraph</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+        </select>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" onclick="execCmd('bold')" title="Bold (Ctrl+B)"><strong>B</strong></button>
+        <button class="tool-btn" onclick="execCmd('italic')" title="Italic (Ctrl+I)"><em>I</em></button>
+        <button class="tool-btn" onclick="execCmd('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+        <button class="tool-btn" onclick="execCmd('strikeThrough')" title="Strikethrough"><s>S</s></button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" onclick="execCmd('formatBlock','blockquote')" title="Quote">❝</button>
+        <button class="tool-btn" onclick="execCmd('insertUnorderedList')" title="Bullet List">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
+        </button>
+        <button class="tool-btn" onclick="execCmd('insertOrderedList')" title="Numbered List">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="6" x2="20" y2="6"/><line x1="10" y1="12" x2="20" y2="12"/><line x1="10" y1="18" x2="20" y2="18"/><text x="2" y="8" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">1</text><text x="2" y="14" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">2</text><text x="2" y="20" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">3</text></svg>
+        </button>
+        <button class="tool-btn" onclick="execCmd('insertHorizontalRule')" title="Horizontal Rule">—</button>
+        <button class="tool-btn" onclick="execCmd('removeFormat')" title="Clear Formatting">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <button class="tool-btn" onclick="toggleSearch()" title="Find (Ctrl+F)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="tool-btn" onclick="toggleFocusMode()" title="Focus Mode (F11)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="ext-toolbar-row">
+      <span class="ext-row-label">Ext</span>
+      <div id="ext-toolbar-items"></div>
+    </div>
+    </div>
+    <div id="search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-input" placeholder="Find in chapter..." oninput="doSearch()">
+      <span class="search-count" id="search-count"></span>
+      <button class="tool-btn" onclick="closeSearch()" title="Close">✕</button>
+    </div>
+    <div id="editor-wrap">
+      <div id="editor-inner">
+        <input type="text" id="chapter-title" placeholder="Chapter title..." oninput="onTitleChange()" />
+        <div id="editor" contenteditable="true" data-placeholder="Begin writing..." oninput="onContentChange()"></div>
+      </div>
+      <div class="no-chapter-msg" id="no-chapter-msg" style="display:none">Select or create a chapter to start writing</div>
+    </div>
+    <div id="status-bar">
+      <span id="word-count">0 words</span>
+      <span class="sep"></span>
+      <span id="char-count">0 chars</span>
+      <span class="sep"></span>
+      <span id="read-time">0 min read</span>
+      <span id="ext-status-items"></span>
+      <span class="status-right">
+        <span id="save-indicator">Saved</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-extensions">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Extensions</h2>
+      <button class="modal-close" onclick="closeModal('extensions')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="ext-list"></div>
+      <div class="ext-add-section">
+        <h3>Add Extension</h3>
+        <div class="ext-add-tabs">
+          <button class="active" onclick="switchExtTab('paste',this)">Paste Code</button>
+          <button onclick="switchExtTab('upload',this)">Upload File</button>
+        </div>
+        <div id="ext-tab-paste">
+          <textarea id="ext-paste-area" placeholder="Paste JavaScript extension code here..."></textarea>
+          <div style="margin-top:8px;display:flex;justify-content:flex-end">
+            <button class="btn btn-primary" onclick="addExtFromPaste()">Install Extension</button>
+          </div>
+        </div>
+        <div id="ext-tab-upload" style="display:none">
+          <div class="ext-upload-zone" onclick="document.getElementById('ext-file-input').click()">
+            <p>Click to select a .js file</p>
+            <input type="file" id="ext-file-input" accept=".js" onchange="addExtFromFile(this)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-export">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Export Book</h2>
+      <button class="modal-close" onclick="closeModal('export')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="export-option" onclick="exportBook('txt')">
+        <div class="exp-icon">📄</div>
+        <div class="exp-info"><h4>Plain Text (.txt)</h4><p>Simple text with chapter headers</p></div>
+      </div>
+      <div class="export-option" onclick="exportBook('html')">
+        <div class="exp-icon">🌐</div>
+        <div class="exp-info"><h4>HTML (.html)</h4><p>Formatted HTML with styles</p></div>
+      </div>
+      <div class="export-option" onclick="exportBook('md')">
+        <div class="exp-icon">📝</div>
+        <div class="exp-info"><h4>Markdown (.md)</h4><p>Markdown format for compatibility</p></div>
+      </div>
+      <div class="export-option" onclick="exportBook('json')">
+        <div class="exp-icon">💾</div>
+        <div class="exp-info"><h4>Project Backup (.json)</h4><p>Full backup including all books and structure</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Context Menu -->
+<div class="ctx-menu" id="ctx-menu" style="display:none"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   QUILL — Novel Writing App
+   ═══════════════════════════════════════════ */
+
+// ── UID Generator ──
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+// ── State ──
+let state = {
+  books: [],
+  activeBookId: null,
+  activeChapterId: null,
+  extensions: [],
+  sidebarCollapsed: false
+};
+let saveTimeout = null;
+let sessionWords = 0;
+let sessionStart = 0;
+
+// ── Init ──
+function init() {
+  const saved = localStorage.getItem('quill-data');
+  if (saved) {
+    try { state = JSON.parse(saved); } catch(e) {}
+  }
+  if (!state.books || state.books.length === 0) {
+    const chId = uid();
+    state.books = [{
+      id: uid(), title: 'My Novel', collapsed: false,
+      items: [
+        { id: uid(), type: 'part', title: 'Part One', collapsed: false },
+        { id: chId, type: 'chapter', title: 'Chapter 1', content: '' }
+      ]
+    }];
+    state.activeBookId = state.books[0].id;
+    state.activeChapterId = chId;
+  }
+  if (!state.extensions) state.extensions = [];
+
+  if (state.sidebarCollapsed) document.getElementById('sidebar').classList.add('collapsed');
+
+  renderSidebar();
+  loadActiveChapter();
+  loadExtensions();
+  sessionStart = getWordCount();
+
+  // Editor events
+  const editor = document.getElementById('editor');
+  editor.addEventListener('keydown', onEditorKeydown);
+  editor.addEventListener('mouseup', updateToolbarState);
+  editor.addEventListener('keyup', updateToolbarState);
+
+  document.addEventListener('keydown', onGlobalKeydown);
+  document.addEventListener('click', (e) => {
+    const ctx = document.getElementById('ctx-menu');
+    if (!ctx.contains(e.target)) ctx.style.display = 'none';
+  });
+
+  // Close modals on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target === el) el.classList.remove('open');
+    });
+  });
+
+  Quill.emit('ready');
+}
+
+// ── Persistence ──
+function save() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    localStorage.setItem('quill-data', JSON.stringify(state));
+    const el = document.getElementById('save-indicator');
+    el.textContent = 'Saved';
+    el.style.opacity = '1';
+    setTimeout(() => el.style.opacity = '0.5', 1200);
+    Quill.emit('save');
+  }, 400);
+  document.getElementById('save-indicator').textContent = 'Saving...';
+  document.getElementById('save-indicator').style.opacity = '1';
+}
+
+// ── Book/Part/Chapter CRUD ──
+function getActiveBook() { return state.books.find(b => b.id === state.activeBookId); }
+function getActiveChapter() {
+  const book = getActiveBook();
+  return book ? book.items.find(i => i.id === state.activeChapterId && i.type === 'chapter') : null;
+}
+
+function createBook() {
+  const chId = uid();
+  const book = {
+    id: uid(), title: 'Untitled Novel', collapsed: false,
+    items: [{ id: chId, type: 'chapter', title: 'Chapter 1', content: '' }]
+  };
+  state.books.push(book);
+  state.activeBookId = book.id;
+  state.activeChapterId = chId;
+  renderSidebar();
+  loadActiveChapter();
+  save();
+  toast('New book created');
+}
+
+function addPart(bookId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+  const part = { id: uid(), type: 'part', title: 'New Part', collapsed: false };
+  book.items.push(part);
+  renderSidebar();
+  save();
+  startRename(part.id);
+}
+
+function addChapter(bookId, afterId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+  const ch = { id: uid(), type: 'chapter', title: 'New Chapter', content: '' };
+  if (afterId) {
+    const idx = book.items.findIndex(i => i.id === afterId);
+    book.items.splice(idx + 1, 0, ch);
+  } else {
+    book.items.push(ch);
+  }
+  state.activeBookId = bookId;
+  state.activeChapterId = ch.id;
+  renderSidebar();
+  loadActiveChapter();
+  save();
+  startRename(ch.id);
+}
+
+function deleteItem(bookId, itemId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+  book.items = book.items.filter(i => i.id !== itemId);
+  if (state.activeChapterId === itemId) {
+    const firstCh = book.items.find(i => i.type === 'chapter');
+    state.activeChapterId = firstCh ? firstCh.id : null;
+    loadActiveChapter();
+  }
+  renderSidebar();
+  save();
+  toast('Deleted');
+}
+
+function deleteBook(bookId) {
+  if (state.books.length === 1) { toast('Cannot delete the last book'); return; }
+  state.books = state.books.filter(b => b.id !== bookId);
+  if (state.activeBookId === bookId) {
+    state.activeBookId = state.books[0].id;
+    const firstCh = state.books[0].items.find(i => i.type === 'chapter');
+    state.activeChapterId = firstCh ? firstCh.id : null;
+    loadActiveChapter();
+  }
+  renderSidebar();
+  save();
+  toast('Book deleted');
+}
+
+function moveItem(bookId, itemId, direction) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+  const idx = book.items.findIndex(i => i.id === itemId);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= book.items.length) return;
+  [book.items[idx], book.items[newIdx]] = [book.items[newIdx], book.items[idx]];
+  renderSidebar();
+  save();
+}
+
+function moveBook(bookId, direction) {
+  const idx = state.books.findIndex(b => b.id === bookId);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= state.books.length) return;
+  [state.books[idx], state.books[newIdx]] = [state.books[newIdx], state.books[idx]];
+  renderSidebar();
+  save();
+}
+
+// ── Sidebar Rendering ──
+function renderSidebar() {
+  const container = document.getElementById('sidebar-tree');
+  let html = '';
+  state.books.forEach(book => {
+    const isActive = book.id === state.activeBookId;
+    html += `<div class="tree-book" data-book="${book.id}">`;
+    html += `<div class="tree-item book-item${isActive ? '' : ''}" onclick="selectBook('${book.id}')" ondblclick="startRename('${book.id}')">`;
+    html += `<span class="icon">${book.collapsed ? '▸' : '▾'}</span>`;
+    html += `<span class="label" id="label-${book.id}">${esc(book.title)}</span>`;
+    html += `<button class="menu-btn" onclick="event.stopPropagation();showCtx(event,'book','${book.id}')">⋯</button>`;
+    html += `</div>`;
+
+    if (!book.collapsed) {
+      html += `<div class="book-chapters">`;
+      let inPart = false;
+      book.items.forEach(item => {
+        if (item.type === 'part') {
+          inPart = true;
+          html += `<div class="tree-item part-item" onclick="togglePart('${book.id}','${item.id}')" ondblclick="event.stopPropagation();startRename('${item.id}')">`;
+          html += `<span class="icon" style="font-size:9px">${item.collapsed ? '▸' : '▾'}</span>`;
+          html += `<span class="label" id="label-${item.id}">${esc(item.title)}</span>`;
+          html += `<button class="menu-btn" onclick="event.stopPropagation();showCtx(event,'part','${book.id}','${item.id}')">⋯</button>`;
+          html += `</div>`;
+        } else if (item.type === 'chapter') {
+          const isChActive = item.id === state.activeChapterId && book.id === state.activeBookId;
+          // Check if this chapter is inside a collapsed part
+          const partAbove = findPartAbove(book, item.id);
+          if (partAbove && partAbove.collapsed) return;
+          const extraClass = inPart ? ' part-child' : '';
+          html += `<div class="tree-item chapter-item${isChActive ? ' active' : ''}${extraClass}" onclick="selectChapter('${book.id}','${item.id}')" ondblclick="event.stopPropagation();startRename('${item.id}')">`;
+          html += `<span class="icon">📄</span>`;
+          html += `<span class="label" id="label-${item.id}">${esc(item.title)}</span>`;
+          html += `<button class="menu-btn" onclick="event.stopPropagation();showCtx(event,'chapter','${book.id}','${item.id}')">⋯</button>`;
+          html += `</div>`;
+        }
+      });
+      // Add buttons
+      html += `<div class="tree-add indent-2" onclick="addChapter('${book.id}')">+ Chapter</div>`;
+      html += `<div class="tree-add indent-1" onclick="addPart('${book.id}')">+ Part</div>`;
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function findPartAbove(book, chapterId) {
+  let lastPart = null;
+  for (const item of book.items) {
+    if (item.type === 'part') lastPart = item;
+    if (item.id === chapterId) return lastPart;
+  }
+  return null;
+}
+
+function selectBook(bookId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+  book.collapsed = !book.collapsed;
+  if (!book.collapsed) {
+    state.activeBookId = bookId;
+    if (!book.items.find(i => i.id === state.activeChapterId)) {
+      const firstCh = book.items.find(i => i.type === 'chapter');
+      if (firstCh) {
+        state.activeChapterId = firstCh.id;
+        loadActiveChapter();
+      }
+    }
+  }
+  renderSidebar();
+  save();
+}
+
+function togglePart(bookId, partId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+  const part = book.items.find(i => i.id === partId);
+  if (part) part.collapsed = !part.collapsed;
+  renderSidebar();
+  save();
+}
+
+function selectChapter(bookId, chapterId) {
+  saveCurrentChapter();
+  state.activeBookId = bookId;
+  state.activeChapterId = chapterId;
+  loadActiveChapter();
+  renderSidebar();
+  Quill.emit('chapter:change', { bookId, chapterId });
+}
+
+// ── Editor ──
+function loadActiveChapter() {
+  const ch = getActiveChapter();
+  const editor = document.getElementById('editor');
+  const titleInput = document.getElementById('chapter-title');
+  const noMsg = document.getElementById('no-chapter-msg');
+  const editorInner = document.getElementById('editor-inner');
+
+  if (ch) {
+    noMsg.style.display = 'none';
+    editorInner.style.display = 'block';
+    editor.innerHTML = ch.content || '';
+    titleInput.value = ch.title;
+    updateCounts();
+    editor.focus();
+  } else {
+    noMsg.style.display = 'flex';
+    editorInner.style.display = 'none';
+  }
+}
+
+function saveCurrentChapter() {
+  const ch = getActiveChapter();
+  if (ch) {
+    ch.content = document.getElementById('editor').innerHTML;
+  }
+}
+
+function onContentChange() {
+  saveCurrentChapter();
+  updateCounts();
+  save();
+  Quill.emit('content:change');
+}
+
+function onTitleChange() {
+  const ch = getActiveChapter();
+  if (ch) {
+    ch.title = document.getElementById('chapter-title').value || 'Untitled';
+    renderSidebar();
+    save();
+  }
+}
+
+function getWordCount() {
+  const text = document.getElementById('editor').innerText || '';
+  const trimmed = text.trim();
+  return trimmed ? trimmed.split(/\s+/).length : 0;
+}
+
+function getBookWordCount() {
+  const book = getActiveBook();
+  if (!book) return 0;
+  let total = 0;
+  book.items.forEach(item => {
+    if (item.type === 'chapter' && item.content) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = item.content;
+      const txt = tmp.innerText.trim();
+      total += txt ? txt.split(/\s+/).length : 0;
+    }
+  });
+  return total;
+}
+
+function updateCounts() {
+  const words = getWordCount();
+  const text = document.getElementById('editor').innerText || '';
+  const chars = text.length;
+  const readTime = Math.max(1, Math.ceil(words / 250));
+  document.getElementById('word-count').textContent = `${words.toLocaleString()} words`;
+  document.getElementById('char-count').textContent = `${chars.toLocaleString()} chars`;
+  document.getElementById('read-time').textContent = `~${readTime} min read`;
+}
+
+// ── Formatting ──
+function execCmd(cmd, val) {
+  if (cmd === 'formatBlock') {
+    document.execCommand('formatBlock', false, `<${val}>`);
+  } else {
+    document.execCommand(cmd, false, val || null);
+  }
+  document.getElementById('editor').focus();
+  updateToolbarState();
+}
+
+function setBlockType(tag) {
+  if (tag === 'p') {
+    document.execCommand('formatBlock', false, '<p>');
+  } else {
+    document.execCommand('formatBlock', false, `<${tag}>`);
+  }
+  document.getElementById('editor').focus();
+}
+
+function updateToolbarState() {
+  const sel = document.getElementById('block-type');
+  let block = document.queryCommandValue('formatBlock');
+  if (block && block.match(/^h[1-3]$/i)) {
+    sel.value = block.toLowerCase();
+  } else {
+    sel.value = 'p';
+  }
+}
+
+function onEditorKeydown(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    document.execCommand('insertText', false, '    ');
+  }
+}
+
+// ── Search ──
+let searchOpen = false;
+function toggleSearch() {
+  searchOpen = !searchOpen;
+  const bar = document.getElementById('search-bar');
+  bar.classList.toggle('open', searchOpen);
+  if (searchOpen) document.getElementById('search-input').focus();
+  else clearSearch();
+}
+
+function closeSearch() {
+  searchOpen = false;
+  document.getElementById('search-bar').classList.remove('open');
+  clearSearch();
+}
+
+function doSearch() {
+  clearHighlights();
+  const q = document.getElementById('search-input').value;
+  if (!q) { document.getElementById('search-count').textContent = ''; return; }
+  const editor = document.getElementById('editor');
+  const text = editor.innerHTML;
+  const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const count = (text.match(regex) || []).length;
+  document.getElementById('search-count').textContent = `${count} found`;
+  // Highlight using window.find for simplicity
+  if (window.find) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    let found = false;
+    if (window.find(q, false, false, true)) found = true;
+  }
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-count').textContent = '';
+  clearHighlights();
+}
+
+function clearHighlights() { /* CSS highlight is sufficient */ }
+
+// ── Context Menu ──
+function showCtx(e, type, bookId, itemId) {
+  e.preventDefault();
+  e.stopPropagation();
+  const ctx = document.getElementById('ctx-menu');
+  let html = '';
+
+  if (type === 'book') {
+    html += `<button onclick="startRename('${bookId}');hideCtx()">Rename</button>`;
+    html += `<button onclick="moveBook('${bookId}',-1);hideCtx()">Move Up</button>`;
+    html += `<button onclick="moveBook('${bookId}',1);hideCtx()">Move Down</button>`;
+    html += `<div class="ctx-sep"></div>`;
+    html += `<button class="ctx-danger" onclick="if(confirm('Delete this book and all its contents?'))deleteBook('${bookId}');hideCtx()">Delete Book</button>`;
+  } else if (type === 'part') {
+    html += `<button onclick="startRename('${itemId}');hideCtx()">Rename</button>`;
+    html += `<button onclick="addChapter('${bookId}','${itemId}');hideCtx()">Add Chapter After</button>`;
+    html += `<button onclick="moveItem('${bookId}','${itemId}',-1);hideCtx()">Move Up</button>`;
+    html += `<button onclick="moveItem('${bookId}','${itemId}',1);hideCtx()">Move Down</button>`;
+    html += `<div class="ctx-sep"></div>`;
+    html += `<button class="ctx-danger" onclick="if(confirm('Delete this part divider?'))deleteItem('${bookId}','${itemId}');hideCtx()">Delete Part</button>`;
+  } else if (type === 'chapter') {
+    html += `<button onclick="startRename('${itemId}');hideCtx()">Rename</button>`;
+    html += `<button onclick="addChapter('${bookId}','${itemId}');hideCtx()">Add Chapter After</button>`;
+    html += `<button onclick="moveItem('${bookId}','${itemId}',-1);hideCtx()">Move Up</button>`;
+    html += `<button onclick="moveItem('${bookId}','${itemId}',1);hideCtx()">Move Down</button>`;
+    html += `<div class="ctx-sep"></div>`;
+    html += `<button class="ctx-danger" onclick="if(confirm('Delete this chapter?'))deleteItem('${bookId}','${itemId}');hideCtx()">Delete Chapter</button>`;
+  }
+
+  ctx.innerHTML = html;
+  ctx.style.display = 'block';
+  // Position
+  const rect = ctx.getBoundingClientRect();
+  let x = e.clientX, y = e.clientY;
+  if (x + 160 > window.innerWidth) x = window.innerWidth - 165;
+  if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 8;
+  ctx.style.left = x + 'px';
+  ctx.style.top = y + 'px';
+}
+
+function hideCtx() { document.getElementById('ctx-menu').style.display = 'none'; }
+
+// ── Rename ──
+function startRename(itemId) {
+  hideCtx();
+  const labelEl = document.getElementById(`label-${itemId}`);
+  if (!labelEl) return;
+  const current = labelEl.textContent;
+  const input = document.createElement('input');
+  input.className = 'rename-input';
+  input.value = current;
+  labelEl.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const finish = () => {
+    const newVal = input.value.trim() || current;
+    // Find and update the item
+    let found = false;
+    for (const book of state.books) {
+      if (book.id === itemId) { book.title = newVal; found = true; break; }
+      for (const item of book.items) {
+        if (item.id === itemId) { item.title = newVal; found = true; break; }
+      }
+      if (found) break;
+    }
+    // Also update chapter title input if it's the active chapter
+    if (state.activeChapterId === itemId) {
+      document.getElementById('chapter-title').value = newVal;
+    }
+    renderSidebar();
+    save();
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') input.blur();
+    if (e.key === 'Escape') { input.value = current; input.blur(); }
+  });
+}
+
+// ── Sidebar Toggle ──
+function toggleSidebar() {
+  state.sidebarCollapsed = !state.sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', state.sidebarCollapsed);
+  save();
+}
+
+// ── Focus Mode ──
+let focusMode = false;
+function toggleFocusMode() {
+  focusMode = !focusMode;
+  document.body.classList.toggle('focus-mode', focusMode);
+  if (focusMode) toast('Focus mode — press Esc or F11 to exit');
+}
+
+// ── Export ──
+function exportBook(format) {
+  const book = getActiveBook();
+  if (!book) { toast('No book selected'); return; }
+  saveCurrentChapter();
+  let content = '', filename = '', mime = '';
+  const sanitizedTitle = book.title.replace(/[^a-z0-9]/gi, '_');
+
+  if (format === 'json') {
+    content = JSON.stringify(state, null, 2);
+    filename = 'quill-backup.json';
+    mime = 'application/json';
+  } else if (format === 'txt') {
+    let lines = [book.title, '='.repeat(book.title.length), ''];
+    book.items.forEach(item => {
+      if (item.type === 'part') {
+        lines.push('', `── ${item.title} ──`, '');
+      } else {
+        lines.push(`${item.title}`, '-'.repeat(item.title.length));
+        const tmp = document.createElement('div');
+        tmp.innerHTML = item.content || '';
+        lines.push(tmp.innerText, '');
+      }
+    });
+    content = lines.join('\n');
+    filename = `${sanitizedTitle}.txt`;
+    mime = 'text/plain';
+  } else if (format === 'html') {
+    let body = `<h1>${esc(book.title)}</h1>`;
+    book.items.forEach(item => {
+      if (item.type === 'part') {
+        body += `<hr><h2>${esc(item.title)}</h2>`;
+      } else {
+        body += `<h3>${esc(item.title)}</h3><div>${item.content || ''}</div>`;
+      }
+    });
+    content = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(book.title)}</title><style>body{font-family:Georgia,serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.8;color:#2c2c2c}h1{border-bottom:2px solid #ddd;padding-bottom:8px}h2{color:#666;font-style:italic}h3{margin-top:2em}</style></head><body>${body}</body></html>`;
+    filename = `${sanitizedTitle}.html`;
+    mime = 'text/html';
+  } else if (format === 'md') {
+    let lines = [`# ${book.title}`, ''];
+    book.items.forEach(item => {
+      if (item.type === 'part') {
+        lines.push('---', '', `## ${item.title}`, '');
+      } else {
+        lines.push(`### ${item.title}`, '');
+        const tmp = document.createElement('div');
+        tmp.innerHTML = item.content || '';
+        lines.push(tmp.innerText, '');
+      }
+    });
+    content = lines.join('\n');
+    filename = `${sanitizedTitle}.md`;
+    mime = 'text/markdown';
+  }
+
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  closeModal('export');
+  toast(`Exported as ${filename}`);
+}
+
+// ── Import backup ──
+function importBackup(jsonStr) {
+  try {
+    const data = JSON.parse(jsonStr);
+    if (data.books && Array.isArray(data.books)) {
+      state = data;
+      renderSidebar();
+      loadActiveChapter();
+      save();
+      toast('Backup imported successfully');
+    } else {
+      toast('Invalid backup file');
+    }
+  } catch(e) {
+    toast('Failed to parse backup');
+  }
+}
+
+// ── Modals ──
+function openModal(name) {
+  document.getElementById(`modal-${name}`).classList.add('open');
+  if (name === 'extensions') renderExtList();
+}
+function closeModal(name) {
+  document.getElementById(`modal-${name}`).classList.remove('open');
+}
+
+// ── Extensions System ──
+function renderExtList() {
+  const list = document.getElementById('ext-list');
+  if (state.extensions.length === 0) {
+    list.innerHTML = '<p style="color:var(--text-tertiary);font-size:12.5px;text-align:center;padding:16px 0">No extensions installed</p>';
+    return;
+  }
+  list.innerHTML = state.extensions.map((ext, i) => `
+    <div class="ext-card">
+      <div class="ext-info">
+        <span class="ext-name">${esc(ext.name)}</span>
+        ${ext.version ? `<span class="ext-ver">v${esc(ext.version)}</span>` : ''}
+        ${ext.description ? `<div class="ext-desc">${esc(ext.description)}</div>` : ''}
+      </div>
+      <div class="ext-toggle${ext.enabled ? ' on' : ''}" onclick="toggleExt(${i})"></div>
+      <div class="ext-actions">
+        <button onclick="removeExt(${i})" title="Remove">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchExtTab(tab, btn) {
+  document.querySelectorAll('.ext-add-tabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ext-tab-paste').style.display = tab === 'paste' ? 'block' : 'none';
+  document.getElementById('ext-tab-upload').style.display = tab === 'upload' ? 'block' : 'none';
+}
+
+function installExtension(code) {
+  try {
+    const meta = { name: 'Unknown Extension', version: '', description: '' };
+    // Try to parse metadata from comments
+    const nameMatch = code.match(/\/[/*]\s*@name\s+(.+?)(\*\/|$)/m);
+    const verMatch = code.match(/\/[/*]\s*@version\s+(.+?)(\*\/|$)/m);
+    const descMatch = code.match(/\/[/*]\s*@description\s+(.+?)(\*\/|$)/m);
+    if (nameMatch) meta.name = nameMatch[1].trim();
+    if (verMatch) meta.version = verMatch[1].trim();
+    if (descMatch) meta.description = descMatch[1].trim();
+
+    const ext = { id: uid(), ...meta, code, enabled: true, _loaded: false };
+    state.extensions.push(ext);
+    loadSingleExtension(ext);
+    renderExtList();
+    save();
+    toast(`Installed: ${meta.name}`);
+  } catch(e) {
+    toast('Failed to install extension: ' + e.message);
+  }
+}
+
+function addExtFromPaste() {
+  const code = document.getElementById('ext-paste-area').value.trim();
+  if (!code) { toast('Please paste extension code'); return; }
+  installExtension(code);
+  document.getElementById('ext-paste-area').value = '';
+}
+
+function addExtFromFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    installExtension(e.target.result);
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function toggleExt(index) {
+  const ext = state.extensions[index];
+  if (!ext) return;
+  ext.enabled = !ext.enabled;
+  if (ext.enabled) {
+    loadSingleExtension(ext);
+  } else {
+    unloadExtension(ext);
+  }
+  renderExtList();
+  save();
+}
+
+function removeExt(index) {
+  const ext = state.extensions[index];
+  if (!ext) return;
+  if (!confirm(`Remove "${ext.name}"?`)) return;
+  unloadExtension(ext);
+  state.extensions.splice(index, 1);
+  renderExtList();
+  save();
+  toast(`Removed: ${ext.name}`);
+}
+
+function loadExtensions() {
+  state.extensions.forEach(ext => {
+    if (ext.enabled) loadSingleExtension(ext);
+  });
+}
+
+function loadSingleExtension(ext) {
+  if (ext._loaded) return;
+  try {
+    const fn = new Function(ext.code);
+    fn();
+    ext._loaded = true;
+  } catch(e) {
+    console.error(`Extension "${ext.name}" error:`, e);
+    toast(`Extension error: ${ext.name}`);
+  }
+}
+
+function unloadExtension(ext) {
+  if (ext._destroyFn) {
+    try { ext._destroyFn(); } catch(e) {}
+  }
+  ext._loaded = false;
+  // Re-render toolbar/status to remove any extension UI
+  document.getElementById('ext-toolbar-items').innerHTML = '';
+  document.getElementById('ext-toolbar-row').classList.remove('has-items');
+  document.getElementById('ext-status-items').innerHTML = '';
+  // Reload all enabled extensions' UI
+  state.extensions.forEach(e => {
+    if (e.enabled && e._loaded) {
+      // Extensions should re-register on reload
+    }
+  });
+}
+
+// ── Global Extension API ──
+const _eventListeners = {};
+window.Quill = {
+  version: '1.0.0',
+
+  // Register an extension with a destroy callback
+  register(config) {
+    if (config.init) config.init();
+    if (config.destroy) {
+      const ext = state.extensions.find(e => e._loaded && !e._destroyFn);
+      if (ext) ext._destroyFn = config.destroy;
+    }
+  },
+
+  // Events
+  on(event, fn) {
+    if (!_eventListeners[event]) _eventListeners[event] = [];
+    _eventListeners[event].push(fn);
+  },
+  off(event, fn) {
+    if (_eventListeners[event]) {
+      _eventListeners[event] = _eventListeners[event].filter(f => f !== fn);
+    }
+  },
+  emit(event, data) {
+    (_eventListeners[event] || []).forEach(fn => { try { fn(data); } catch(e) { console.error(e); } });
+  },
+
+  // Theme
+  theme: {
+    set(vars) {
+      const root = document.documentElement;
+      Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+    },
+    get(varName) {
+      return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    },
+    reset() {
+      document.documentElement.removeAttribute('style');
+    }
+  },
+
+  // UI
+  ui: {
+    addToolbarButton(config) {
+      const container = document.getElementById('ext-toolbar-items');
+      const row = document.getElementById('ext-toolbar-row');
+      // Add separator if this isn't the first extension button
+      if (container.children.length > 0) {
+        const sep = document.createElement('div');
+        sep.className = 'tool-sep';
+        container.appendChild(sep);
+      }
+      const btn = document.createElement('button');
+      btn.className = 'tool-btn';
+      btn.innerHTML = config.icon || config.label || '?';
+      btn.title = config.title || '';
+      if (config.id) btn.id = config.id;
+      btn.addEventListener('click', config.onClick || (() => {}));
+      container.appendChild(btn);
+      // Show the extension row
+      row.classList.add('has-items');
+      return btn;
+    },
+    addStatusBarItem(config) {
+      const container = document.getElementById('ext-status-items');
+      const span = document.createElement('span');
+      span.textContent = config.text || '';
+      if (config.id) span.id = config.id;
+      container.appendChild(span);
+      return span;
+    },
+    showToast(msg) { toast(msg); },
+    sidebar: {
+      show() { state.sidebarCollapsed = false; document.getElementById('sidebar').classList.remove('collapsed'); },
+      hide() { state.sidebarCollapsed = true; document.getElementById('sidebar').classList.add('collapsed'); },
+      toggle() { toggleSidebar(); }
+    }
+  },
+
+  // Data access
+  data: {
+    getBooks() { return state.books; },
+    getActiveBook,
+    getActiveChapter,
+    getState() { return state; },
+    save() { save(); }
+  },
+
+  // Editor
+  editor: {
+    getElement() { return document.getElementById('editor'); },
+    getContent() { return document.getElementById('editor').innerHTML; },
+    setContent(html) { document.getElementById('editor').innerHTML = html; onContentChange(); },
+    getWordCount,
+    getBookWordCount,
+    getSelection() { return window.getSelection(); },
+    exec(cmd, val) { execCmd(cmd, val); },
+    insertText(text) { document.execCommand('insertText', false, text); }
+  },
+
+  // Extension storage
+  store: {
+    get(key) {
+      try { return JSON.parse(localStorage.getItem(`quill-ext-${key}`)); } catch { return null; }
+    },
+    set(key, value) {
+      localStorage.setItem(`quill-ext-${key}`, JSON.stringify(value));
+    },
+    remove(key) {
+      localStorage.removeItem(`quill-ext-${key}`);
+    }
+  }
+};
+
+// ── Keyboard Shortcuts ──
+function onGlobalKeydown(e) {
+  // Ctrl+S - save
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveCurrentChapter();
+    save();
+    toast('Saved');
+  }
+  // Ctrl+\ - toggle sidebar
+  if ((e.ctrlKey || e.metaKey) && e.key === '\\') {
+    e.preventDefault();
+    toggleSidebar();
+  }
+  // Ctrl+F - search
+  if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+    if (document.activeElement === document.getElementById('editor') || !searchOpen) {
+      e.preventDefault();
+      toggleSearch();
+    }
+  }
+  // F11 - focus mode
+  if (e.key === 'F11') {
+    e.preventDefault();
+    toggleFocusMode();
+  }
+  // Escape
+  if (e.key === 'Escape') {
+    if (focusMode) toggleFocusMode();
+    if (searchOpen) closeSearch();
+    hideCtx();
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+}
+
+// ── Toast ──
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// ── Helpers ──
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Handle drag & drop for JSON import
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.json')) {
+    const reader = new FileReader();
+    reader.onload = (ev) => importBackup(ev.target.result);
+    reader.readAsText(file);
+  }
+});
+
+// ── Start ──
+init();
+</script>
+</body>
+</html>
